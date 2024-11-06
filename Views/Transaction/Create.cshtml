@@ -1,0 +1,42 @@
+@model VendingMachineApp.Models.Transaction
+
+<h1>Tambah Transaksi</h1>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="UserId" class="control-label"></label>
+        <select asp-for="UserId" class="form-control">
+            <option value="">-- Pilih User --</option>
+            @foreach (var user in ViewData["Users"] as List<VendingMachineApp.Models.User>)
+            {
+                <option value="@user.UserId">@user.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IdProduct" class="control-label"></label>
+        <select asp-for="IdProduct" class="form-control">
+            <option value="">-- Pilih Produk --</option>
+            @foreach (var product in ViewData["Products"] as List<VendingMachineApp.Models.Product>)
+            {
+                <option value="@product.IdProduct">@product.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Amount" class="control-label"></label>
+        <input asp-for="Amount" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TransactionType" class="control-label"></label>
+        <select asp-for="TransactionType" class="form-control">
+            <option value="Pembelian">Pembelian</option>
+            <option value="Penambahan Saldo">Penambahan Saldo</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Simpan</button>
+</form>

@@ -1,0 +1,11 @@
+@model VendingMachineApp.Models.Product
+
+<h1>Hapus Produk</h1>
+
+<p>Apakah Anda yakin ingin menghapus produk <strong>@Model.Name</strong>?</p>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="IdProduct" />
+    <button type="submit" class="btn btn-danger">Hapus</button>
+    <a href="@Url.Action("Index", "Product")" class="btn btn-secondary">Batal</a>
+</form>

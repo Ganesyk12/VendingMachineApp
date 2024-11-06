@@ -1,0 +1,31 @@
+@model IEnumerable<VendingMachineApp.Models.Transaction>
+
+<h1>Daftar Transaksi</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Transaksi ID</th>
+            <th>User</th>
+            <th>Item</th>
+            <th>Amount</th>
+            <th>Balance After Transaction</th>
+            <th>Transaction Type</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in Model)
+        {
+            <tr>
+                <td>@transaction.TransactionId</td>
+                <td>@transaction.User?.Name</td>
+                <td>@transaction.Product?.Name ?? "Saldo"</td>
+                <td>@transaction.Amount</td>
+                <td>@transaction.BalanceAfterTransaction</td>
+                <td>@transaction.TransactionType</td>
+                <td>@transaction.Date.ToString("g")</td>
+            </tr>
+        }
+    </tbody>
+</table>

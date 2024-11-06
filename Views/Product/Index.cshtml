@@ -1,0 +1,32 @@
+@model IEnumerable<VendingMachineApp.Models.Product>
+
+<h1>Daftar Produk</h1>
+
+<a href="@Url.Action("Create", "Product")" class="btn btn-primary">Tambah Produk</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Produk ID</th>
+            <th>Nama Produk</th>
+            <th>Harga</th>
+            <th>Jumlah</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.IdProduct</td>
+                <td>@product.Name</td>
+                <td>@product.Price.ToString("C")</td>
+                <td>@product.Quantity</td>
+                <td>
+                    <a href="@Url.Action("Edit", "Product", new { id = product.IdProduct })" class="btn btn-warning">Edit</a>
+                    <a href="@Url.Action("Delete", "Product", new { id = product.IdProduct })" class="btn btn-danger">Hapus</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
