@@ -1,15 +1,22 @@
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using VendingMachineApp.Data;
+using VendingMachineApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add DbContext
+// Using MySQL
+// builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//     options.UseMySql(
+//         builder.Configuration.GetConnectionString("VendingMachineContext"),
+//         new MySqlServerVersion(new Version(8, 0, 40))
+//     )
+// );
+
+// Using PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("VendingMachineContext"),
-        new MySqlServerVersion(new Version(8, 0, 40))
-    )
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("VendingMachineContext"))
 );
 
 // Add services to the container.

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using VendingMachineApp.Models;
-namespace VendingMachineApp.Data;
+namespace VendingMachineApp.Models;
 
     public class ApplicationDbContext : DbContext
     {

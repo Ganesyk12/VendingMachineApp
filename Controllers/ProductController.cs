@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using VendingMachineApp.Data;
 using VendingMachineApp.Models;
 using System.Linq;
 using System.Threading.Tasks;
