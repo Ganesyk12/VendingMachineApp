@@ -1,42 +1,69 @@
 @model VendingMachineApp.Models.Transaction
+@{
+    ViewData["Title"] = "Tambah Transaksi";
+}
 
-<h1>Tambah Transaksi</h1>
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="vending-card animate__animated animate__fadeInUp">
+            <h2 class="page-title mb-4">Manual Transaction</h2>
+            
+            <form asp-action="Create">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="IdUser" class="form-label text-info small fw-bold">PELANGGAN</label>
+                        <select asp-for="IdUser" class="form-select vending-form-control">
+                            <option value="">-- Pilih User --</option>
+                            @if (ViewData["Users"] is List<VendingMachineApp.Models.User> users)
+                            {
+                                foreach (var user in users)
+                                {
+                                    <option value="@user.UserId">@user.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
 
-<form asp-action="Create">
-    <div class="form-group">
-        <label asp-for="UserId" class="control-label"></label>
-        <select asp-for="UserId" class="form-control">
-            <option value="">-- Pilih User --</option>
-            @foreach (var user in ViewData["Users"] as List<VendingMachineApp.Models.User>)
-            {
-                <option value="@user.UserId">@user.Name</option>
-            }
-        </select>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="IdProduct" class="form-label text-info small fw-bold">PRODUK</label>
+                        <select asp-for="IdProduct" class="form-select vending-form-control">
+                            <option value="">-- Pilih Produk --</option>
+                            @if (ViewData["Products"] is List<VendingMachineApp.Models.Product> products)
+                            {
+                                foreach (var product in products)
+                                {
+                                    <option value="@product.IdProduct">@product.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Amount" class="form-label text-info small fw-bold">NOMINAL (RP)</label>
+                        <input asp-for="Amount" class="form-control vending-form-control" type="number" />
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <label asp-for="TransactionType" class="form-label text-info small fw-bold">TIPE TRANSAKSI</label>
+                        <select asp-for="TransactionType" class="form-select vending-form-control">
+                            <option value="Pembelian">Pembelian</option>
+                            <option value="Penambahan Saldo">Penambahan Saldo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <a href="@Url.Action("Index", "Transaction")" class="text-muted text-decoration-none small">
+                        <i class="fas fa-arrow-left me-1"></i> Kembali ke Riwayat
+                    </a>
+                    <button type="submit" class="btn-vending">
+                        <i class="fas fa-plus-circle me-2"></i>PROSES TRANSAKSI
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 
-    <div class="form-group">
-        <label asp-for="IdProduct" class="control-label"></label>
-        <select asp-for="IdProduct" class="form-control">
-            <option value="">-- Pilih Produk --</option>
-            @foreach (var product in ViewData["Products"] as List<VendingMachineApp.Models.Product>)
-            {
-                <option value="@product.IdProduct">@product.Name</option>
-            }
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Amount" class="control-label"></label>
-        <input asp-for="Amount" class="form-control" />
-    </div>
-
-    <div class="form-group">
-        <label asp-for="TransactionType" class="control-label"></label>
-        <select asp-for="TransactionType" class="form-control">
-            <option value="Pembelian">Pembelian</option>
-            <option value="Penambahan Saldo">Penambahan Saldo</option>
-        </select>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Simpan</button>
-</form>

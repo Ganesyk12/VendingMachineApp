@@ -9,9 +9,9 @@ namespace VendingMachineApp.Controllers
 {
     public class TransactionController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly VendingMachineContext _context;
 
-        public TransactionController(ApplicationDbContext context)
+        public TransactionController(VendingMachineContext context)
         {
             _context = context;
         }
@@ -35,12 +35,11 @@ namespace VendingMachineApp.Controllers
             return View();
         }
 
-        // Menangani POST untuk membuat transaksi
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int userId, int? IdProduct, decimal amount, string transactionType)
+        public async Task<IActionResult> Create(int idUser, int? IdProduct, decimal amount, string transactionType)
         {
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _context.Users.FindAsync(idUser);
             var product = IdProduct != null ? await _context.Products.FindAsync(IdProduct) : null;
 
             if (user == null) {
@@ -67,7 +66,7 @@ namespace VendingMachineApp.Controllers
 
             var transaction = new Transaction
             {
-                UserId = userId,
+                IdUser = idUser,
                 IdProduct = IdProduct,
                 Amount = amount,
                 Date = DateTime.Now,

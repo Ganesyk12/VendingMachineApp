@@ -14,9 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 // );
 
 // Using PostgreSQL
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<VendingMachineContext>(options =>
     options.UseNpgsql(
-        builder.Configuration.GetConnectionString("VendingMachineContext"))
+        builder.Configuration.GetConnectionString("VendingMachineContext"),
+        x => x.MigrationsHistoryTable("__EFMigrationsHistory", "vendingmachine"))
 );
 
 // Add services to the container.

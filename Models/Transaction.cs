@@ -9,7 +9,10 @@ public class Transaction
     [Key]
         public int TransactionId { get; set; }
         
-        public int UserId { get; set; }
+        [ForeignKey("User")]
+        public int IdUser { get; set; }
+
+        [ForeignKey("Product")]
         public int? IdProduct { get; set; }
 
         public decimal Amount { get; set; }

@@ -10,13 +10,14 @@ using VendingMachineApp.Models;
 
 namespace VendingMachineApp.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(VendingMachineContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("vendingmachine")
                 .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -41,7 +42,7 @@ namespace VendingMachineApp.Migrations
 
                     b.HasKey("IdProduct");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", "vendingmachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.Transaction", b =>
@@ -64,22 +65,19 @@ namespace VendingMachineApp.Migrations
                     b.Property<int?>("IdProduct")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ProductIdProduct")
+                    b.Property<int>("IdUser")
                         .HasColumnType("integer");
 
                     b.Property<string>("TransactionType")
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("TransactionId");
 
-                    b.HasIndex("ProductIdProduct");
+                    b.HasIndex("IdProduct");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("IdUser");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", "vendingmachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.User", b =>
@@ -98,18 +96,18 @@ namespace VendingMachineApp.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", "vendingmachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.Transaction", b =>
                 {
                     b.HasOne("VendingMachineApp.Models.Product", "Product")
                         .WithMany("Transactions")
-                        .HasForeignKey("ProductIdProduct");
+                        .HasForeignKey("IdProduct");
 
                     b.HasOne("VendingMachineApp.Models.User", "User")
                         .WithMany("Transactions")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("IdUser")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -8,9 +8,9 @@ namespace VendingMachineApp.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly VendingMachineContext _context;
 
-        public ProductController(ApplicationDbContext context)
+        public ProductController(VendingMachineContext context)
         {
             _context = context;
         }
