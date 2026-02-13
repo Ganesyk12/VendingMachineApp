@@ -22,23 +22,43 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public IActionResult RegisterUser(string name, decimal balance)
+    public IActionResult CheckUser(string name)
     {
         if (string.IsNullOrEmpty(name)) return BadRequest("Nama harus diisi.");
 
         var user = _context.Users.FirstOrDefault(u => u.Name == name);
         if (user == null)
         {
-            user = new User { Name = name, Balance = balance };
-            _context.Users.Add(user);
+            return Json(new { success = true, exists = false });
         }
-        else
+        
+        return Json(new { success = true, exists = true, userId = user.UserId, balance = user.Balance });
+    }
+
+    [HttpPost]
+    public IActionResult RegisterUser(string name, decimal balance)
+    {
+        if (string.IsNullOrEmpty(name)) return BadRequest("Nama harus diisi.");
+
+        var existingUser = _context.Users.FirstOrDefault(u => u.Name == name);
+        if (existingUser != null)
         {
-            user.Balance = balance; // Reset balance for this simulation if user already exists
-            _context.Users.Update(user);
+            return BadRequest("User sudah terdaftar. Silakan login.");
         }
 
+        var user = new User { Name = name, Balance = balance };
+        _context.Users.Add(user);
         _context.SaveChanges();
+
+        return Json(new { success = true, userId = user.UserId, balance = user.Balance });
+    }
+
+    [HttpPost]
+    public IActionResult LoginUser(int userId)
+    {
+        var user = _context.Users.Find(userId);
+        if (user == null) return NotFound("User tidak ditemukan.");
+
         return Json(new { success = true, userId = user.UserId, balance = user.Balance });
     }
 
@@ -77,7 +97,7 @@ public class HomeController : Controller
                 IdProduct = product.IdProduct,
                 Amount = product.Price * item.Quantity,
                 TransactionType = "Pembelian",
-                Date = DateTime.Now
+                Date = DateTime.UtcNow
             };
             
             user.Balance -= (product.Price * item.Quantity);

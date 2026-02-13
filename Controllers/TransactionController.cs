@@ -69,7 +69,7 @@ namespace VendingMachineApp.Controllers
                 IdUser = idUser,
                 IdProduct = IdProduct,
                 Amount = amount,
-                Date = DateTime.Now,
+                Date = DateTime.UtcNow,
                 BalanceAfterTransaction = balanceAfterTransaction,
                 TransactionType = transactionType
             };

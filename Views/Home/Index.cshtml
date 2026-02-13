@@ -7,22 +7,43 @@
     <!-- User Registration Section -->
     <div class="vending-card mb-4 animate__animated animate__fadeInDown">
         <h4 class="page-title mb-3"><i class="fas fa-user-circle me-2"></i>Informasi Pelanggan</h4>
-        <div class="row align-items-end">
-            <div class="col-md-4 mb-3 mb-md-0">
+        <div class="row align-items-end" id="auth-container">
+            <div class="col-md-5 mb-3 mb-md-0">
                 <label class="form-label text-info small fw-bold">NAMA PELANGGAN</label>
-                <input type="text" id="userName" class="form-control vending-form-control" placeholder="Masukkan nama..." />
+                <div class="input-group">
+                    <input type="text" id="userName" class="form-control vending-form-control" placeholder="Masukkan nama..." />
+                    <button class="btn btn-outline-info" type="button" id="btnCheckName">Cek</button>
+                </div>
             </div>
-            <div class="col-md-4 mb-3 mb-md-0">
-                <label class="form-label text-info small fw-bold">SALDO AWAL (RP)</label>
-                <input type="number" id="userBalance" class="form-control vending-form-control" placeholder="0" min="0" />
+            
+            <div id="register-fields" class="col-md-7 d-none animate__animated animate__fadeIn">
+                <div class="row align-items-end">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label class="form-label text-warning small fw-bold">SALDO AWAL (RP)</label>
+                        <input type="number" id="userBalance" class="form-control vending-form-control" placeholder="0" min="0" />
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" id="btnRegister" class="btn-vending w-100 btn-register">
+                            <i class="fas fa-user-plus me-2"></i>DAFTAR SEKARANG
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4">
-                <button type="button" id="btnSetUser" class="btn-vending w-100">
-                    <i class="fas fa-sign-in-alt me-2"></i>MULAI BELANJA
+
+            <div id="login-fields" class="col-md-3 d-none animate__animated animate__fadeIn">
+                <button type="button" id="btnLogin" class="btn-vending w-100 btn-login">
+                    <i class="fas fa-sign-in-alt me-2"></i>MASUK
+                </button>
+            </div>
+
+            <div id="initial-action" class="col-md-3">
+                <button type="button" disabled class="btn-vending w-100 opacity-50">
+                    <i class="fas fa-arrow-right me-2"></i>Mulai Belanja
                 </button>
             </div>
         </div>
         <input type="hidden" id="currentUserId" value="0" />
+        <div id="auth-status-msg" class="mt-2 small text-muted"></div>
     </div>
 
     <!-- Header / Machine Display -->
@@ -102,36 +123,80 @@
             let cart = {};
             let currentBalance = 0;
             let currentUserId = 0;
+            let foundUserId = 0;
+            let foundBalance = 0;
 
-            // Mechanism 1: Set User & Initial Balance
-            $('#btnSetUser').click(function() {
+            // Step 1: Check if user exists
+            $('#btnCheckName').click(function() {
                 const name = $('#userName').val();
-                const balance = $('#userBalance').val();
+                if (!name) { alert('Harap masukkan nama.'); return; }
 
-                if (!name || isNaN(balance)) {
-                    alert('Harap masukkan nama dan saldo yang valid.');
-                    return;
-                }
-
-                $.post('/Home/RegisterUser', { name: name, balance: balance }, function(response) {
+                $.post('/Home/CheckUser', { name: name }, function(response) {
                     if (response.success) {
-                        currentUserId = response.userId;
-                        currentBalance = response.balance;
-                        
-                        $('#currentUserId').val(currentUserId);
-                        $('#displayUserName').text(name);
-                        $('#activeBalanceDisplay').text('Rp ' + currentBalance.toLocaleString('id-ID'));
-                        
-                        // Make inputs read-only / disable
-                        $('#userName, #userBalance, #btnSetUser').prop('disabled', true).addClass('opacity-50');
-                        
-                        updateUI();
-                        alert('Berhasil Login! Selamat berbelanja, ' + name);
+                        $('#initial-action').addClass('d-none');
+                        if (response.exists) {
+                            // User exists -> Show Login
+                            foundUserId = response.userId;
+                            foundBalance = response.balance;
+                            $('#login-fields').removeClass('d-none');
+                            $('#register-fields').addClass('d-none');
+                            $('#auth-status-msg').html('<i class="fas fa-check-circle text-success me-1"></i> Akun ditemukan! Silakan masuk.');
+                        } else {
+                            // User not found -> Show Register
+                            $('#login-fields').addClass('d-none');
+                            $('#register-fields').removeClass('d-none');
+                            $('#auth-status-msg').html('<i class="fas fa-info-circle text-info me-1"></i> Akun belum terdaftar. Silakan daftar dulu.');
+                        }
                     }
                 }).fail(function(xhr) {
                     alert('Error: ' + xhr.responseText);
                 });
             });
+
+            // Handle Login
+            $('#btnLogin').click(function() {
+                $.post('/Home/LoginUser', { userId: foundUserId }, function(response) {
+                    if (response.success) {
+                        completeAuth(response.userId, response.balance, $('#userName').val());
+                    }
+                });
+            });
+
+            // Handle Registration
+            $('#btnRegister').click(function() {
+                const name = $('#userName').val();
+                const balance = $('#userBalance').val();
+
+                if (!balance || isNaN(balance) || balance < 0) {
+                    alert('Harap masukkan saldo yang valid.');
+                    return;
+                }
+
+                $.post('/Home/RegisterUser', { name: name, balance: balance }, function(response) {
+                    if (response.success) {
+                        completeAuth(response.userId, response.balance, name);
+                        alert('Pendaftaran berhasil! Selamat datang, ' + name);
+                    }
+                }).fail(function(xhr) {
+                    alert('Error: ' + xhr.responseText);
+                });
+            });
+
+            function completeAuth(userId, balance, name) {
+                currentUserId = userId;
+                currentBalance = balance;
+                
+                $('#currentUserId').val(currentUserId);
+                $('#displayUserName').text(name);
+                $('#activeBalanceDisplay').text('Rp ' + currentBalance.toLocaleString('id-ID'));
+                
+                // Hide and disable auth UI
+                $('#auth-container').addClass('opacity-50');
+                $('#userName, #userBalance, #btnCheckName, #btnRegister, #btnLogin').prop('disabled', true);
+                $('#auth-status-msg').html('<i class="fas fa-user-check text-info me-1"></i> Terhubung sebagai <b>' + name + '</b>');
+                
+                updateUI();
+            }
 
             function updateUI() {
                 let totalItems = 0;
