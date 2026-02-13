@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VendingMachineApp.Models;
@@ -11,9 +12,11 @@ using VendingMachineApp.Models;
 namespace VendingMachineApp.Migrations
 {
     [DbContext(typeof(VendingMachineContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260213143525_AddUserAuthorizeModel")]
+    partial class AddUserAuthorizeModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +40,7 @@ namespace VendingMachineApp.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("DateModified")
+                    b.Property<DateTime?>("DateModified")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<decimal>("DebitBalance")
@@ -49,19 +52,16 @@ namespace VendingMachineApp.Migrations
                     b.Property<int>("IdUser")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<string>("TransactionType")
                         .HasColumnType("text");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("IdBalanceHistory");
@@ -82,7 +82,7 @@ namespace VendingMachineApp.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("DateModified")
+                    b.Property<DateTime?>("DateModified")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Name")
@@ -94,16 +94,13 @@ namespace VendingMachineApp.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("IdProduct");
@@ -131,7 +128,7 @@ namespace VendingMachineApp.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("DateModified")
+                    b.Property<DateTime?>("DateModified")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<int?>("IdProduct")
@@ -140,22 +137,16 @@ namespace VendingMachineApp.Migrations
                     b.Property<int>("IdUser")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<string>("TransactionType")
                         .HasColumnType("text");
 
-                    b.Property<string>("TrxCode")
-                        .HasColumnType("text");
-
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("TransactionId");
@@ -181,7 +172,7 @@ namespace VendingMachineApp.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("DateModified")
+                    b.Property<DateTime?>("DateModified")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("IdUser")
@@ -191,16 +182,13 @@ namespace VendingMachineApp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("IdUserBalance");
@@ -222,23 +210,20 @@ namespace VendingMachineApp.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("DateModified")
+                    b.Property<DateTime?>("DateModified")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserCreated")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserModified")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserName")

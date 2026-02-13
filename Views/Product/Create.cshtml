@@ -7,23 +7,50 @@
     <div class="col-md-6">
         <div class="vending-card animate__animated animate__fadeInUp">
             <h2 class="page-title mb-4">Tambah Produk Baru</h2>
-            
+
             <form asp-action="Create">
-                <div class="mb-3">
-                    <label asp-for="Name" class="form-label text-info small fw-bold">NAMA PRODUK</label>
-                    <input asp-for="Name" class="form-control vending-form-control" placeholder="Masukkan nama produk..." />
-                    <span asp-validation-for="Name" class="text-danger small"></span>
+                <div class="mb-4">
+                    <label class="form-label text-info small fw-bold d-block">TIPE PENAMBAHAN</label>
+                    <div class="btn-group w-100" role="group">
+                        <input type="radio" class="btn-check" name="isNewProduct" id="modeNew" value="true" checked>
+                        <label class="btn btn-outline-info" for="modeNew"><i class="fas fa-plus-circle me-2"></i>Produk Baru</label>
+
+                        <input type="radio" class="btn-check" name="isNewProduct" id="modeExisting" value="false">
+                        <label class="btn btn-outline-info" for="modeExisting"><i class="fas fa-boxes me-2"></i>Produk Tersedia</label>
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="Price" class="form-label text-info small fw-bold">HARGA (RP)</label>
-                    <input asp-for="Price" class="form-control vending-form-control" type="number" placeholder="0" />
-                    <span asp-validation-for="Price" class="text-danger small"></span>
+                <div id="sectionExistingProduct" style="display: none;" class="mb-3 animate__animated animate__fadeIn">
+                    <label class="form-label text-info small fw-bold">PILIH PRODUK</label>
+                    <select name="selectedProductId" class="form-select vending-form-control">
+                        <option value="">-- Pilih Produk --</option>
+                        @if (ViewBag.ExistingProducts != null)
+                        {
+                            foreach (var p in (List<VendingMachineApp.Models.Product>)ViewBag.ExistingProducts)
+                            {
+                                <option value="@p.IdProduct">@p.Name (Stok: @p.Quantity)</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div id="sectionNewProduct">
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label text-info small fw-bold">NAMA PRODUK</label>
+                        <input asp-for="Name" class="form-control vending-form-control" placeholder="Masukkan nama produk..."/>
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Price" class="form-label text-info small fw-bold">HARGA (RP)</label>
+                        <input asp-for="Price" class="form-control vending-form-control" type="number" placeholder="0"/>
+                        <span asp-validation-for="Price" class="text-danger small"></span>
+                    </div>
                 </div>
 
                 <div class="mb-4">
-                    <label asp-for="Quantity" class="form-label text-info small fw-bold">JUMLAH STOK</label>
-                    <input asp-for="Quantity" class="form-control vending-form-control" type="number" min="0" placeholder="0" />
+                    <label asp-for="Quantity" id="labelQuantity" class="form-label text-info small fw-bold">JUMLAH STOK AWAL</label>
+                    <input asp-for="Quantity" class="form-control vending-form-control" type="number" min="0" placeholder="0"/>
                     <span asp-validation-for="Quantity" class="text-danger small"></span>
                 </div>
 
@@ -32,10 +59,37 @@
                         <i class="fas fa-arrow-left me-1"></i> Kembali ke Daftar
                     </a>
                     <button type="submit" class="btn-vending">
-                        <i class="fas fa-save me-2"></i>SIMPAN PRODUK
+                        <i class="fas fa-save me-2"></i>SIMPAN PERUBAHAN
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('input[name="isNewProduct"]').change(function() {
+                if ($('#modeNew').is(':checked')) {
+                    $('#sectionNewProduct').show();
+                    $('#sectionExistingProduct').hide();
+                    $('#labelQuantity').text('JUMLAH STOK AWAL');
+                    
+                    // Enable validation for new product fields
+                    $('#Name, #Price').prop('required', true);
+                } else {
+                    $('#sectionNewProduct').hide();
+                    $('#sectionExistingProduct').show();
+                    $('#labelQuantity').text('TAMBAH JUMLAH STOK');
+                    
+                    // Disable validation for new product fields
+                    $('#Name, #Price').prop('required', false);
+                }
+            });
+            
+            // Trigger initial state
+            $('input[name="isNewProduct"]:checked').change();
+        });
+    </script>
+}

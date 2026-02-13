@@ -1,0 +1,51 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Register - Vending Machine";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="vending-card animate__animated animate__fadeInUp">
+            <h2 class="page-title text-center mb-4"><i class="fas fa-user-plus me-2 text-info"></i>REGISTRASI</h2>
+
+            <form asp-action="Register" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Name" class="form-label text-info small fw-bold">NAMA LENGKAP</label>
+                        <input asp-for="Name" class="form-control vending-form-control" placeholder="John Doe"/>
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Email" class="form-label text-info small fw-bold">EMAIL ADDRESS</label>
+                        <input asp-for="Email" class="form-control vending-form-control" placeholder="john@example.com"/>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Password" class="form-label text-info small fw-bold">PASSWORD</label>
+                        <input asp-for="Password" class="form-control vending-form-control" type="password" placeholder="••••••••"/>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label text-info small fw-bold">KONFIRMASI PASSWORD</label>
+                        <input asp-for="ConfirmPassword" class="form-control vending-form-control" type="password" placeholder="••••••••"/>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-vending w-100 mb-3 mt-3">
+                    <i class="fas fa-check-circle me-2"></i>BUAT AKUN
+                </button>
+
+                <div class="text-center">
+                    <span class="text-muted small">Sudah punya akun? </span>
+                    <a asp-action="Login" class="text-info small text-decoration-none fw-bold">Login Disini</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

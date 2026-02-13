@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VendingMachineApp.Models;
 
-public class Product
+public class Product : BaseEntity
 {
     [Key]
     public int IdProduct { get; set; }

@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using VendingMachineApp.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VendingMachineApp.Controllers
 {
+    [Authorize]
     public class ProductController : Controller
     {
         private readonly VendingMachineContext _context;
@@ -23,38 +25,57 @@ namespace VendingMachineApp.Controllers
         }
 
         // Menampilkan form untuk membuat produk baru
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.ExistingProducts = await _context.Products.OrderBy(p => p.Name).ToListAsync();
             return View();
         }
 
-        // Menangani POST untuk membuat produk baru
+        // Menangani POST untuk membuat produk baru atau update stok
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Product product)
+        public async Task<IActionResult> Create(Product product, bool isNewProduct, int? selectedProductId)
         {
-            if (ModelState.IsValid)
+            if (isNewProduct)
             {
-                _context.Products.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Products.Add(product);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
+            else
+            {
+                if (selectedProductId.HasValue && product.Quantity > 0)
+                {
+                    var existingProduct = await _context.Products.FindAsync(selectedProductId.Value);
+                    if (existingProduct != null)
+                    {
+                        existingProduct.Quantity += product.Quantity;
+                        _context.Update(existingProduct);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    ModelState.AddModelError("", "Produk tidak ditemukan.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Harap pilih produk dan masukkan jumlah yang valid.");
+                }
+            }
+
+            ViewBag.ExistingProducts = await _context.Products.OrderBy(p => p.Name).ToListAsync();
             return View(product);
         }
 
         // Menampilkan form untuk mengedit produk
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            if (product == null) return NotFound();
             return View(product);
         }
 
@@ -63,11 +84,7 @@ namespace VendingMachineApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Product product)
         {
-            if (id != product.IdProduct)
-            {
-                return NotFound();
-            }
-
+            if (id != product.IdProduct) return NotFound();
             if (ModelState.IsValid)
             {
                 try
@@ -77,34 +94,23 @@ namespace VendingMachineApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.IdProduct))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!ProductExists(product.IdProduct)) return NotFound();
+                    else throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(product);
         }
 
         // GET: Product/Delete/{id}
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var product = await _context.Products
                 .FirstOrDefaultAsync(m => m.IdProduct == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            if (product == null) return NotFound();
 
             return View(product); // Pastikan produk dikirim ke view Delete
         }
@@ -116,13 +122,9 @@ namespace VendingMachineApp.Controllers
         {
             Console.WriteLine($"ID Produk yang akan dihapus: {id}");
             var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            if (product == null) return NotFound();
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
-            
             return RedirectToAction(nameof(Index));
         }
 

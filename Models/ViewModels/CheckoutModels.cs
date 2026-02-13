@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace VendingMachineApp.Models;
+namespace VendingMachineApp.Models.ViewModels;
 
 public class CheckoutRequest
 {

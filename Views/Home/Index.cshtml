@@ -4,87 +4,92 @@
 }
 
 <div class="container py-5">
-    <!-- User Registration Section -->
-    <div class="vending-card mb-4 animate__animated animate__fadeInDown">
-        <h4 class="page-title mb-3"><i class="fas fa-user-circle me-2"></i>Informasi Pelanggan</h4>
-        <div class="row align-items-end" id="auth-container">
-            <div class="col-md-5 mb-3 mb-md-0">
-                <label class="form-label text-info small fw-bold">NAMA PELANGGAN</label>
-                <div class="input-group">
-                    <input type="text" id="userName" class="form-control vending-form-control" placeholder="Masukkan nama..." />
-                    <button class="btn btn-outline-info" type="button" id="btnCheckName">Cek</button>
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <!-- Balance Management Section -->
+        <div class="vending-card mb-4 animate__animated animate__fadeInDown">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h4 class="page-title mb-1"><i class="fas fa-wallet me-2 text-info"></i>Manajemen Saldo</h4>
+                    <span class="text-muted small">Halo <b>@User.Identity.Name</b>, Anda bisa menambah saldo untuk berbelanja.</span>
                 </div>
-            </div>
-            
-            <div id="register-fields" class="col-md-7 d-none animate__animated animate__fadeIn">
-                <div class="row align-items-end">
-                    <div class="col-md-6 mb-3 mb-md-0">
-                        <label class="form-label text-warning small fw-bold">SALDO AWAL (RP)</label>
-                        <input type="number" id="userBalance" class="form-control vending-form-control" placeholder="0" min="0" />
-                    </div>
-                    <div class="col-md-6">
-                        <button type="button" id="btnRegister" class="btn-vending w-100 btn-register">
-                            <i class="fas fa-user-plus me-2"></i>DAFTAR SEKARANG
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-info text-info">Rp</span>
+                        <input type="number" id="topupAmount" class="form-control vending-form-control" placeholder="Masukkan nominal..." min="1000" step="1000"/>
+                        <button class="btn btn-info px-4 fw-bold" type="button" id="btnTopup">
+                            <i class="fas fa-plus-circle me-2"></i>TAMBAH SALDO
                         </button>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div id="login-fields" class="col-md-3 d-none animate__animated animate__fadeIn">
-                <button type="button" id="btnLogin" class="btn-vending w-100 btn-login">
-                    <i class="fas fa-sign-in-alt me-2"></i>MASUK
-                </button>
+        <!-- Header / Machine Display -->
+        <div class="vending-header animate__animated animate__fadeIn">
+            <div>
+                <h2 class="mb-0"><i class="fas fa-robot me-2 text-info"></i>Vending Machine</h2>
+                <span class="text-muted small">Silakan pilih produk favorit Anda</span>
             </div>
-
-            <div id="initial-action" class="col-md-3">
-                <button type="button" disabled class="btn-vending w-100 opacity-50">
-                    <i class="fas fa-arrow-right me-2"></i>Mulai Belanja
-                </button>
+            <div class="money-display-group">
+                <span class="money-label">Saldo Tersedia</span>
+                <div class="fs-3 fw-bold text-info" id="activeBalanceDisplay">Rp @ViewBag.CurrentBalance.ToString("N0")</div>
             </div>
         </div>
-        <input type="hidden" id="currentUserId" value="0" />
-        <div id="auth-status-msg" class="mt-2 small text-muted"></div>
-    </div>
-
-    <!-- Header / Machine Display -->
-    <div class="vending-header animate__animated animate__fadeIn">
-        <div>
-            <h2 class="mb-0"><i class="fas fa-robot me-2 text-info"></i>Vending Machine</h2>
-            <span class="text-muted small">Halo <span id="displayUserName" class="text-info fw-bold">Tamu</span>, silakan pilih produk</span>
+        <input type="hidden" id="currentUserId" value="@ViewBag.IdUser"/>
+    }
+    else
+    {
+        <!-- Guest Welcome Card -->
+        <div class="vending-card mb-4 text-center py-5 animate__animated animate__zoomIn">
+            <i class="fas fa-store fa-4x text-info mb-4"></i>
+            <h2 class="page-title">Selamat Datang di Vending Machine</h2>
+            <p class="text-muted mb-4">Silakan masuk ke akun Anda untuk melanjutkan transaksi belanja.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a asp-controller="Account" asp-action="Login" class="btn-vending px-5">
+                    <i class="fas fa-sign-in-alt me-2"></i>LOGIN SEKARANG
+                </a>
+                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-info rounded-pill px-5">
+                    <i class="fas fa-user-plus me-2"></i>BUAT AKUN
+                </a>
+            </div>
         </div>
-        <div class="money-display-group">
-            <span class="money-label">Saldo Tersedia</span>
-            <div class="fs-3 fw-bold text-info" id="activeBalanceDisplay">Rp 0</div>
-        </div>
-    </div>
+        <input type="hidden" id="currentUserId" value="0"/>
+    }
 
     <!-- Product Table -->
     <div class="vending-table-container animate__animated animate__fadeInUp">
         <table class="table table-vending">
             <thead>
-                <tr>
-                    <th>Nama Produk</th>
-                    <th>Harga</th>
-                    <th>Stok</th>
-                    <th class="text-center">Jumlah Beli</th>
-                </tr>
+            <tr>
+                <th>Nama Produk</th>
+                <th>Harga</th>
+                <th>Stok</th>
+                <th class="text-center">Jumlah Beli</th>
+            </tr>
             </thead>
             <tbody>
-                @foreach (var product in Model)
-                {
-                    <tr class="product-row" data-id="@product.IdProduct" data-price="@product.Price" data-stock="@product.Quantity">
-                        <td><span class="fw-bold">@product.Name</span></td>
-                        <td><span class="text-info">Rp @product.Price.ToString("N0")</span></td>
-                        <td><span class="stock-display">@product.Quantity</span></td>
-                        <td>
-                            <div class="qty-controls justify-content-center">
-                                <button class="btn-qty btn-minus" disabled>-</button>
-                                <span class="qty-display">0</span>
-                                <button class="btn-qty btn-plus">+</button>
-                            </div>
-                        </td>
-                    </tr>
-                }
+            @foreach (var product in Model)
+            {
+                <tr class="product-row" data-id="@product.IdProduct" data-price="@product.Price" data-stock="@product.Quantity">
+                    <td>
+                        <span class="fw-bold">@product.Name</span>
+                    </td>
+                    <td>
+                        <span class="text-info">Rp @product.Price.ToString("N0")</span>
+                    </td>
+                    <td>
+                        <span class="stock-display">@product.Quantity</span>
+                    </td>
+                    <td>
+                        <div class="qty-controls justify-content-center">
+                            <button class="btn-qty btn-minus" disabled>-</button>
+                            <span class="qty-display">0</span>
+                            <button class="btn-qty btn-plus">+</button>
+                        </div>
+                    </td>
+                </tr>
+            }
             </tbody>
         </table>
     </div>
@@ -121,80 +126,46 @@
     <script>
         $(document).ready(function() {
             let cart = {};
-            let currentBalance = 0;
-            let currentUserId = 0;
-            let foundUserId = 0;
-            let foundBalance = 0;
+            let currentUserId = parseInt($('#currentUserId').val()) || 0;
+            let currentBalance = parseCurrency($('#activeBalanceDisplay').text());
 
-            // Step 1: Check if user exists
-            $('#btnCheckName').click(function() {
-                const name = $('#userName').val();
-                if (!name) { alert('Harap masukkan nama.'); return; }
+            function parseCurrency(str) {
+                return parseFloat(str.replace(/[^\d]/g, '')) || 0;
+            }
 
-                $.post('/Home/CheckUser', { name: name }, function(response) {
-                    if (response.success) {
-                        $('#initial-action').addClass('d-none');
-                        if (response.exists) {
-                            // User exists -> Show Login
-                            foundUserId = response.userId;
-                            foundBalance = response.balance;
-                            $('#login-fields').removeClass('d-none');
-                            $('#register-fields').addClass('d-none');
-                            $('#auth-status-msg').html('<i class="fas fa-check-circle text-success me-1"></i> Akun ditemukan! Silakan masuk.');
-                        } else {
-                            // User not found -> Show Register
-                            $('#login-fields').addClass('d-none');
-                            $('#register-fields').removeClass('d-none');
-                            $('#auth-status-msg').html('<i class="fas fa-info-circle text-info me-1"></i> Akun belum terdaftar. Silakan daftar dulu.');
-                        }
-                    }
-                }).fail(function(xhr) {
-                    alert('Error: ' + xhr.responseText);
-                });
+            // Live Format Topup Amount
+            $('#topupAmount').on('input', function() {
+                let val = $(this).val().replace(/[^\d]/g, '');
+                if (val !== "") {
+                    $(this).val(parseInt(val).toLocaleString('id-ID'));
+                }
             });
 
-            // Handle Login
-            $('#btnLogin').click(function() {
-                $.post('/Home/LoginUser', { userId: foundUserId }, function(response) {
-                    if (response.success) {
-                        completeAuth(response.userId, response.balance, $('#userName').val());
-                    }
-                });
-            });
-
-            // Handle Registration
-            $('#btnRegister').click(function() {
-                const name = $('#userName').val();
-                const balance = $('#userBalance').val();
-
-                if (!balance || isNaN(balance) || balance < 0) {
-                    alert('Harap masukkan saldo yang valid.');
-                    return;
+            // Handle Topup
+            $('#btnTopup').click(function() {
+                const rawAmount = $('#topupAmount').val();
+                const amount = parseCurrency(rawAmount);
+                
+                if (amount <= 0) { 
+                    Swal.fire('Info', 'Harap masukkan nominal topup.', 'info'); 
+                    return; 
                 }
 
-                $.post('/Home/RegisterUser', { name: name, balance: balance }, function(response) {
+                $.post('/Home/AddBalance', { amount: amount }, function(response) {
                     if (response.success) {
-                        completeAuth(response.userId, response.balance, name);
-                        alert('Pendaftaran berhasil! Selamat datang, ' + name);
+                        currentBalance = response.newBalance;
+                        $('#activeBalanceDisplay').text('Rp ' + currentBalance.toLocaleString('id-ID'));
+                        $('#topupAmount').val('');
+                        Swal.fire('Sukses', 'Topup Berhasil!', 'success');
+                        updateUI();
                     }
                 }).fail(function(xhr) {
-                    alert('Error: ' + xhr.responseText);
+                    Swal.fire('Error', xhr.responseText || 'Gagal melakukan topup.', 'error');
                 });
             });
 
-            function completeAuth(userId, balance, name) {
-                currentUserId = userId;
-                currentBalance = balance;
-                
-                $('#currentUserId').val(currentUserId);
-                $('#displayUserName').text(name);
-                $('#activeBalanceDisplay').text('Rp ' + currentBalance.toLocaleString('id-ID'));
-                
-                // Hide and disable auth UI
-                $('#auth-container').addClass('opacity-50');
-                $('#userName, #userBalance, #btnCheckName, #btnRegister, #btnLogin').prop('disabled', true);
-                $('#auth-status-msg').html('<i class="fas fa-user-check text-info me-1"></i> Terhubung sebagai <b>' + name + '</b>');
-                
+            // If user is logged in, init UI
+            if (currentUserId > 0) {
                 updateUI();
             }
 
@@ -241,7 +212,10 @@
             }
 
             $('.btn-plus').click(function() {
-                if(currentUserId === 0) { alert('Harap masukkan info pelanggan terlebih dulu.'); return; }
+                if(currentUserId === 0) { 
+                    Swal.fire('Info', 'Harap masuk ke akun Anda terlebih dulu.', 'info'); 
+                    return; 
+                }
                 let row = $(this).closest('.product-row');
                 let id = row.data('id');
                 let stock = parseInt(row.data('stock'));
@@ -285,15 +259,21 @@
                             currentBalance = response.newBalance;
                             $('#activeBalanceDisplay').text('Rp ' + currentBalance.toLocaleString('id-ID'));
                             
-                            alert('Transaksi Berhasil!\nSisa saldo Anda: Rp ' + currentBalance.toLocaleString('id-ID'));
-                            
-                            // Reset cart and reload product list (for stock updates)
-                            cart = {};
-                            location.reload(); 
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Transaksi Berhasil!',
+                                html: 'Sisa saldo Anda: <b>Rp ' + currentBalance.toLocaleString('id-ID') + '</b>',
+                                confirmButtonText: 'OKE',
+                                confirmButtonColor: '#0dcaf0'
+                            }).then(() => {
+                                // Reset cart and reload product list (for stock updates)
+                                cart = {};
+                                location.reload(); 
+                            });
                         }
                     },
                     error: function(xhr) {
-                        alert('Gagal: ' + xhr.responseText);
+                        Swal.fire('Gagal', xhr.responseText || 'Terjadi kesalahan sistem.', 'error');
                     }
                 });
             });

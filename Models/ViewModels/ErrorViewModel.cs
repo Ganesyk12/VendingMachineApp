@@ -1,4 +1,4 @@
-namespace VendingMachineApp.Models;
+namespace VendingMachineApp.Models.ViewModels;
 
 public class ErrorViewModel
 {
