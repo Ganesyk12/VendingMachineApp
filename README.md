@@ -1,48 +1,58 @@
-# Aplikasi Mesin Penjual Otomatis
+# Aplikasi Vending Machine
 
-## Petunjuk Pengaturan
-Ikuti langkah-langkah berikut untuk mengatur dan menjalankan Aplikasi Mesin Penjual Otomatis:
+Aplikasi web yang mensimulasikan sistem mesin penjual otomatis digital atau Vending Machine. Pengguna dapat mendaftar, login, mengecek saldo, memilih produk, dan melakukan transaksi pembelian layaknya menggunakan mesin penjual otomatis fisik. Sistem mencakup otentikasi pengguna, manajemen saldo, katalog produk, serta pelacakan transaksi secara real-time.
 
-### Prasyarat
-- .NET 8.0 SDK atau yang lebih baru
-- Database PostgreSQL (koneksi sudah dikonfigurasi)
+## Fitur Utama
 
-### Langkah Instalasi
+### 🔄 Bisnis Proses
+- Sistem vending machine digital yang menyediakan alur e-commerce lengkap: registrasi pengguna, otentikasi, manajemen saldo, katalog produk, dan pelacakan transaksi secara real-time.
 
-1. **Instal Dependensi**
-   ```bash
-   dotnet restore
-   ```
+### 👣 User Journey
+- Pengalaman pengguna yang intuitif: registrasi, login, penjelajahan produk, manajemen saldo, pembelian produk, dan akses ke riwayat transaksi.
 
-2. **Instal Entity Framework Tools secara Global**
-   ```bash
-   dotnet tool install --global dotnet-ef
-   ```
+### ⚙️ Teknologi
+- Dibangun dengan stack teknologi modern: ASP.NET Core MVC, Entity Framework Core, PostgreSQL, dengan keamanan menggunakan BCrypt untuk hashing password.
 
-3. **Migrasi Database**
-   ```bash
-   dotnet ef database update
-   ```
+## Keunggulan Sistem
 
-4. **Jalankan Aplikasi**
-   ```bash
-   dotnet run
-   ```
-   atau
-   ```bash
-   dotnet watch run
-   ```
+- 🔐 **Autentikasi Aman**: Password di-hash menggunakan BCrypt untuk keamanan maksimal
+- 💳 **Saldo Real-Time**: Pembaruan saldo langsung terlihat setelah setiap transaksi
+- 📊 **Monitoring Transaksi**: Pantau semua aktivitas transaksi secara real-time
+- 📦 **Manajemen Inventaris**: Kelola stok produk secara efisien dan akurat
+- 📋 **Audit Log Terpusat**: Catatan lengkap semua aktivitas sistem untuk keperluan audit
 
-5. **Akses Aplikasi**
-   Buka browser Anda dan akses `https://localhost:5001` atau `http://localhost:5000`
+## Alur Proses Bisnis
 
-### Informasi Tambahan
-- Aplikasi dikonfigurasi untuk menggunakan database PostgreSQL yang dihosting di Supabase
-- Entity Framework digunakan untuk akses data dengan Pomelo.EntityFrameworkCore.MySql
-- Aplikasi mencakup model untuk Pengguna, Produk, dan Transaksi
+```
+1. User Akses Aplikasi
+2. Cek Status Akun (Sudah Punya Akun? → Ya/Tidak)
+3. Jika Belum → Registrasi, Jika Sudah → Login
+4. Akses Dashboard / Beranda
+5. Aksi Paralel:
+   - Top Up Saldo → Update Saldo
+   - Lihat History
+   - Pilih Produk → Validasi Stok & Saldo → Checkout
+   - Admin Panel → Tambah/Edit/Hapus Produk
+6. Semua Aktivitas Dicatat dalam Log Sistem
+```
 
-### Referensi
-- [Tutorial ASP.NET Core MVC](https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app/start-mvc?view=aspnetcore-8.0&tabs=visual-studio)
-- [Bootstrap](https://getbootstrap.com/docs/5.1/getting-started/introduction/)
-- [JQuery Doc](https://releases.jquery.com/jquery/)
-- [SupabaseDB](https://supabase.com/)
+## Tech Stack
+
+| Komponen | Teknologi |
+|----------|-----------|
+| Backend | ASP.NET Core MVC (.NET 8.0) |
+| Frontend | Razor Pages/HTML, CSS, JavaScript |
+| Database | PostgreSQL (dengan Entity Framework Core) |
+| Authentication | Cookie-based authentication |
+| Password Hashing | BCrypt.Net-Next |
+| ORM | Entity Framework Core |
+| Web Framework | ASP.NET Core 8.0 |
+
+## Lisensi
+© 2026 [Ganesyk12](https://github.com/Ganesyk12). All Rights Reserved.
+
+Proyek ini dikembangkan sebagai portofolio pribadi.
+
+Dilarang menyalin, memodifikasi, mendistribusikan, atau menggunakan sebagian maupun seluruh kode sumber dan dokumentasi untuk tujuan komersial maupun non-komersial tanpa izin tertulis dari pemilik.
+
+Untuk kerja sama atau penggunaan lebih lanjut, silakan hubungi pemilik melalui GitHub.
