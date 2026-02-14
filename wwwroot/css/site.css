@@ -244,6 +244,14 @@ body {
     /* Higher than summary bar and other cards */
 }
 
+.navbar-fixed-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-width: 0 0 1px;
+}
+
 .navbar-vending .navbar-brand {
     color: #fff !important;
     font-weight: 800;
@@ -276,4 +284,84 @@ body {
     padding-bottom: 120px;
     /* Space for summary bar */
     margin-top: 0;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .vending-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .money-display-group {
+        text-align: center;
+        width: 100%;
+    }
+
+    .money-input {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .summary-container {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .btn-checkout {
+        width: 90%;
+    }
+
+    .vending-card {
+        padding: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+    }
+
+    .table-vending th,
+    .table-vending td {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .vending-table-container {
+        border-radius: 10px;
+    }
+
+    /* Stack product rows nicely */
+    .product-row {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+    }
+
+    .qty-controls {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-vending .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .btn-vending {
+        width: 100%;
+        text-align: center;
+        margin-top: 0.5rem;
+        margin-left: 0 !important;
+    }
+
+    .footer-vending {
+        padding: 1.5rem 0;
+        font-size: 0.8rem;
+    }
 }

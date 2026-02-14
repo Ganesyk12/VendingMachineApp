@@ -7,16 +7,16 @@
     <div class="col-md-6">
         <div class="vending-card animate__animated animate__shakeX">
             <h2 class="page-title mb-4">Konfirmasi Hapus</h2>
-            
+
             <div class="alert alert-dark bg-dark text-light border-danger mb-4">
                 <i class="fas fa-exclamation-triangle text-danger me-2"></i>
                 Apakah Anda yakin ingin menghapus produk <strong>@Model.Name</strong>?
             </div>
 
             <form asp-action="Delete" method="post">
-                <input type="hidden" asp-for="IdProduct" />
+                <input type="hidden" asp-for="IdProduct"/>
                 <div class="d-flex justify-content-between align-items-center">
-                    <a href="@Url.Action("Index", "Product")" class="text-muted text-decoration-none small">
+                    <a href="@Url.Action("Index", "Product")" class="btn btn-outline-secondary py-2 px-4 rounded-pill text-white border-0 bg-dark bg-opacity-25 hover-vending-secondary">
                         <i class="fas fa-arrow-left me-1"></i> Batal
                     </a>
                     <button type="submit" class="btn btn-danger px-4 py-2 fw-bold">

@@ -28,7 +28,7 @@
         <!-- Header / Machine Display -->
         <div class="vending-header animate__animated animate__fadeIn">
             <div>
-                <h2 class="mb-0"><i class="fas fa-robot me-2 text-info"></i>Vending Machine</h2>
+                <h2 class="mb-0"><i class="fas fa-robot me-2 text-info"></i>Vending Machine Apps</h2>
                 <span class="text-muted small">Silakan pilih produk favorit Anda</span>
             </div>
             <div class="money-display-group">
@@ -59,39 +59,41 @@
 
     <!-- Product Table -->
     <div class="vending-table-container animate__animated animate__fadeInUp">
-        <table class="table table-vending">
-            <thead>
-            <tr>
-                <th>Nama Produk</th>
-                <th>Harga</th>
-                <th>Stok</th>
-                <th class="text-center">Jumlah Beli</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var product in Model)
-            {
-                <tr class="product-row" data-id="@product.IdProduct" data-price="@product.Price" data-stock="@product.Quantity">
-                    <td>
-                        <span class="fw-bold">@product.Name</span>
-                    </td>
-                    <td>
-                        <span class="text-info">Rp @product.Price.ToString("N0")</span>
-                    </td>
-                    <td>
-                        <span class="stock-display">@product.Quantity</span>
-                    </td>
-                    <td>
-                        <div class="qty-controls justify-content-center">
-                            <button class="btn-qty btn-minus" disabled>-</button>
-                            <span class="qty-display">0</span>
-                            <button class="btn-qty btn-plus">+</button>
-                        </div>
-                    </td>
+        <div class="table-responsive">
+            <table class="table table-vending">
+                <thead>
+                <tr>
+                    <th>Nama Produk</th>
+                    <th>Harga</th>
+                    <th>Stok</th>
+                    <th class="text-center">Jumlah Beli</th>
                 </tr>
-            }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr class="product-row" data-id="@product.IdProduct" data-price="@product.Price" data-stock="@product.Quantity">
+                        <td>
+                            <span class="fw-bold">@product.Name</span>
+                        </td>
+                        <td>
+                            <span class="text-info">Rp @product.Price.ToString("N0")</span>
+                        </td>
+                        <td>
+                            <span class="stock-display">@product.Quantity</span>
+                        </td>
+                        <td>
+                            <div class="qty-controls justify-content-center">
+                                <button class="btn-qty btn-minus" disabled>-</button>
+                                <span class="qty-display">0</span>
+                                <button class="btn-qty btn-plus">+</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

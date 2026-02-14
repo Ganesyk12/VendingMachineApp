@@ -20,7 +20,7 @@ namespace VendingMachineApp.Controllers
         // Menampilkan daftar produk
         public async Task<IActionResult> Index()
         {
-            var products = await _context.Products.ToListAsync();
+            var products = await _context.Products.OrderBy(p => p.Name).ToListAsync();
             return View(products);
         }
 

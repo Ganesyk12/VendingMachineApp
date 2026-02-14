@@ -42,24 +42,30 @@ public class VendingMachineContext : DbContext
         var entries = ChangeTracker.Entries()
             .Where(e => e.Entity is BaseEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
 
-        var currentUser =
-            _httpContextAccessor.HttpContext?.User?.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ??
-            "SYSTEM";
+        var user = _httpContextAccessor.HttpContext?.User;
+        var currentUser = user?.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
+                          ?? user?.Identity?.Name
+                          ?? "SYSTEM";
 
         foreach (var entry in entries)
         {
             var entity = (BaseEntity)entry.Entity;
+            var now = DateTime.Now;
+
             if (entry.State == EntityState.Added)
             {
-                if (entity.UserCreated == "SYSTEM") entity.UserCreated = currentUser;
-                entity.DateCreated = DateTime.Now;
-                entity.UserModified = currentUser;
-                entity.DateModified = DateTime.Now;
+                // Rule: Registration entities default to SYSTEM, others use the active user
+                var creator = (entity is UserLogin || entity is UserBalance) ? "SYSTEM" : currentUser;
+
+                entity.UserCreated = creator;
+                entity.DateCreated = now;
+                entity.UserModified = creator;
+                entity.DateModified = now;
             }
             else if (entry.State == EntityState.Modified)
             {
                 entity.UserModified = currentUser;
-                entity.DateModified = DateTime.Now;
+                entity.DateModified = now;
             }
         }
     }

@@ -5,49 +5,53 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="page-title mb-0">Transaction History</h1>
+    @* 
     <a href="@Url.Action("Create", "Transaction")" class="btn-vending">
         <i class="fas fa-plus me-2"></i>Tambah Transaksi (Manual)
-    </a>
+    </a> 
+    *@
 </div>
 
 <div class="vending-table-container">
-    <table class="table table-vending">
-        <thead>
-        <tr>
-            <th>Trx Code</th>
-            <th>User</th>
-            <th>Item</th>
-            <th>Amount</th>
-            <th>Balance After</th>
-            <th>Type</th>
-            <th>Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var transaction in Model)
-        {
+    <div class="table-responsive">
+        <table class="table table-vending">
+            <thead>
             <tr>
-                <td>
-                    <span class="text-info fw-bold">@transaction.TrxCode</span>
-                </td>
-                <td>
-                    <span class="fw-bold">@transaction.User?.UserBalance?.Name</span>
-                </td>
-                <td>@(transaction.Product?.Name ?? "Topup Saldo")</td>
-                <td>
-                    <span class="@(transaction.TransactionType == "Pembelian" ? "text-danger" : "text-success")">Rp @transaction.Amount.ToString("N0")</span>
-                </td>
-                <td>Rp @transaction.BalanceAfterTransaction?.ToString("N0")</td>
-                <td>
-                    <span class="badge @(transaction.TransactionType == "Pembelian" ? "bg-info" : "bg-success")">
-                        @transaction.TransactionType
-                    </span>
-                </td>
-                <td>
-                    <span class="small text-muted">@transaction.Date.ToString("g")</span>
-                </td>
+                <th>Trx Code</th>
+                <th>User</th>
+                <th>Item</th>
+                <th>Amount</th>
+                <th>Balance After</th>
+                <th>Type</th>
+                <th>Date</th>
             </tr>
-        }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @foreach (var transaction in Model)
+            {
+                <tr>
+                    <td>
+                        <span class="text-info fw-bold">@transaction.TrxCode</span>
+                    </td>
+                    <td>
+                        <span class="fw-bold">@transaction.User?.UserBalance?.Name</span>
+                    </td>
+                    <td>@(transaction.Product?.Name ?? "Topup Saldo")</td>
+                    <td>
+                        <span class="@(transaction.TransactionType == "Pembelian" ? "text-danger" : "text-success")">Rp @transaction.Amount.ToString("N0")</span>
+                    </td>
+                    <td>Rp @transaction.BalanceAfterTransaction?.ToString("N0")</td>
+                    <td>
+                        <span class="badge @(transaction.TransactionType == "Pembelian" ? "bg-info" : "bg-success")">
+                            @transaction.TransactionType
+                        </span>
+                    </td>
+                    <td>
+                        <span class="small text-muted">@transaction.Date.ToString("g")</span>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 </div>
