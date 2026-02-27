@@ -1,0 +1,43 @@
+@model VendingMachineApp.Models.UserLogin
+@{
+    ViewData["Title"] = "Hapus Pengguna";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="vending-card animate__animated animate__zoomIn">
+            <h2 class="page-title text-danger mb-4"><i class="fas fa-exclamation-triangle me-2"></i> Konfirmasi Hapus</h2>
+
+            <div class="alert alert-warning mb-4 bg-dark border-warning text-white">
+                <p class="mb-0">Apakah Anda yakin ingin menghapus pengguna ini? <br/><strong>Tindakan ini tidak dapat dibatalkan.</strong> Semua riwayat transaksi dan saldo pengguna juga akan dihapus.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="row mb-2">
+                    <div class="col-sm-4 text-info fw-bold small">NAMA</div>
+                    <div class="col-sm-8 text-white">@(Model.UserBalance?.Name ?? "N/A")</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-sm-4 text-info fw-bold small">EMAIL</div>
+                    <div class="col-sm-8 text-white">@Model.UserName</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-sm-4 text-info fw-bold small">SALDO</div>
+                    <div class="col-sm-8 text-white">Rp @(Model.UserBalance?.Balance.ToString("N0") ?? "0")</div>
+                </div>
+            </div>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="IdUser" />
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="@Url.Action("Index", "UserManagement")" class="btn btn-secondary text-white py-2 px-4 rounded-pill border-0 hover-vending-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Batal
+                    </a>
+                    <button type="submit" class="btn btn-danger py-2 px-4 rounded-pill shadow-sm">
+                        <i class="fas fa-trash-alt me-2"></i>Ya, Hapus Pengguna
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

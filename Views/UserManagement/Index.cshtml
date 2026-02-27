@@ -1,0 +1,67 @@
+@model IEnumerable<VendingMachineApp.Models.ViewModels.UserListViewModel>
+@{
+    ViewData["Title"] = "Manajemen Pengguna";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="page-title mb-0">Daftar Pengguna</h1>
+    <a href="@Url.Action("Create", "UserManagement")" class="btn-vending py-1 px-3">
+        <i class="fas fa-plus me-1"></i>Tambah Pengguna
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="vending-table-container">
+    <div class="table-responsive">
+        <table class="table table-vending">
+            <thead>
+            <tr>
+                <th>Nama</th>
+                <th>Email</th>
+                <th>Saldo</th>
+                <th class="text-center">Aksi</th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var user in Model)
+                {
+                    <tr>
+                        <td>
+                            <span class="fw-bold">@user.Name</span>
+                        </td>
+                        <td>
+                            <span class="text-white-50">@user.UserName</span>
+                        </td>
+                        <td>
+                            <span class="text-info">Rp @user.Balance.ToString("N0")</span>
+                        </td>
+                        <td class="text-center text-nowrap">
+                            <a href="@Url.Action("Edit", "UserManagement", new { id = user.IdUser })" class="btn btn-sm btn-outline-info me-2" title="Edit Pengguna">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="@Url.Action("Delete", "UserManagement", new { id = user.IdUser })" class="btn btn-sm btn-outline-danger" title="Hapus Pengguna">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-white-50">Belum ada pengguna.</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

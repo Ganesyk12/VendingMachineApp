@@ -18,6 +18,7 @@ public class VendingMachineContext : DbContext
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<BalanceHistory> BalanceHistories { get; set; }
     public DbSet<UserBalance> UserBalances { get; set; }
+    public DbSet<SmptpEmail> SmtpEmails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

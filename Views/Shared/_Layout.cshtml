@@ -38,6 +38,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Transaction" ? "active" : "")" asp-area="" asp-controller="Transaction" asp-action="Index">Transaction</a>
                         </li>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "UserManagement" ? "active" : "")" asp-area="" asp-controller="UserManagement" asp-action="Index">User Management</a>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav">
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
