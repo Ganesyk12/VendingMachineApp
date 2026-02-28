@@ -1,0 +1,81 @@
+@model VendingMachineApp.Models.ViewModels.SmtpSettingViewModel
+@{
+    ViewData["Title"] = "Tambah SMTP Email";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="vending-card animate__animated animate__fadeInUp">
+            <h2 class="page-title mb-4">Tambah Konfigurasi SMTP</h2>
+
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label asp-for="Host" class="form-label text-info small fw-bold"></label>
+                        <input asp-for="Host" class="form-control vending-form-control" placeholder="Contoh: smtp.gmail.com"/>
+                        <span asp-validation-for="Host" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Port" class="form-label text-info small fw-bold"></label>
+                        <input asp-for="Port" class="form-control vending-form-control" value="587" type="number"/>
+                        <span asp-validation-for="Port" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="SenderName" class="form-label text-info small fw-bold"></label>
+                        <input asp-for="SenderName" class="form-control vending-form-control" placeholder="Nama Pengirim (Cth: Vending App)"/>
+                        <span asp-validation-for="SenderName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="SenderEmail" class="form-label text-info small fw-bold"></label>
+                        <input asp-for="SenderEmail" class="form-control vending-form-control" placeholder="emailanda@gmail.com" type="email"/>
+                        <span asp-validation-for="SenderEmail" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Username" class="form-label text-info small fw-bold"></label>
+                        <input asp-for="Username" class="form-control vending-form-control" placeholder="Seringkali sama dengan email"/>
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Password" class="form-label text-info small fw-bold"></label>
+                        <input asp-for="Password" class="form-control vending-form-control" type="password" placeholder="Password atau App Password"/>
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input border-info" type="checkbox" role="switch" asp-for="EnableSSL" checked>
+                    <label class="form-check-label text-white" asp-for="EnableSSL">Gunakan SSL/TLS (Disarankan: Ya)</label>
+                </div>
+
+                <div class="form-check form-switch mb-4">
+                    <input class="form-check-input border-success" type="checkbox" role="switch" asp-for="IsActive" checked>
+                    <label class="form-check-label text-success fw-bold" asp-for="IsActive">Jadikan Sebagai SMTP Utama (Aktif)</label>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="@Url.Action("Index", "Smtp")" class="btn btn-secondary text-white py-2 px-4 rounded-pill border-0 hover-vending-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Kembali
+                    </a>
+                    <button type="submit" class="btn-vending">
+                        <i class="fas fa-save me-2"></i>SIMPAN
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

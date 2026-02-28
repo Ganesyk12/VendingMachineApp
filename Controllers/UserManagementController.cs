@@ -131,12 +131,14 @@ namespace VendingMachineApp.Controllers
                     // Check if email is unqiue
                     if (userToUpdate.UserName != model.Email)
                     {
-                        var existingEmail = await _context.UserLogins.FirstOrDefaultAsync(u => u.UserName == model.Email);
+                        var existingEmail =
+                            await _context.UserLogins.FirstOrDefaultAsync(u => u.UserName == model.Email);
                         if (existingEmail != null)
                         {
                             ModelState.AddModelError("Email", "Email sudah terdaftar.");
                             return View(model);
                         }
+
                         userToUpdate.UserName = model.Email;
                     }
 
@@ -174,8 +176,10 @@ namespace VendingMachineApp.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(model);
         }
 
@@ -187,19 +191,21 @@ namespace VendingMachineApp.Controllers
             var user = await _context.UserLogins
                 .Include(u => u.UserBalance)
                 .Include(u => u.BalanceHistories)
-                .Include(u => u.Transactions)
+                .Include(u => u.UserTransactions)
                 .FirstOrDefaultAsync(u => u.IdUser == id);
-            
+
             if (user != null)
             {
                 // Due to cascading restrictions, explicitly remove related records
                 _context.BalanceHistories.RemoveRange(user.BalanceHistories);
-                _context.Transactions.RemoveRange(user.Transactions);
-                if (user.UserBalance != null) {
+                _context.UserTransactions.RemoveRange(user.UserTransactions);
+                if (user.UserBalance != null)
+                {
                     _context.UserBalances.Remove(user.UserBalance);
                 }
+
                 _context.UserLogins.Remove(user);
-                
+
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "User berhasil dihapus.";
             }

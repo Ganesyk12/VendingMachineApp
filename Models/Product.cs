@@ -6,10 +6,9 @@ namespace VendingMachineApp.Models;
 
 public class Product : BaseEntity
 {
-    [Key]
-    public int IdProduct { get; set; }
+    [Key] public int IdProduct { get; set; }
     public string? Name { get; set; }
     public decimal Price { get; set; }
     public int Quantity { get; set; }
-    public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+    public ICollection<TransactionDetail> TransactionDetails { get; set; } = new List<TransactionDetail>();
 }

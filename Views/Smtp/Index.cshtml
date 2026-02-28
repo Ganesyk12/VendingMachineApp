@@ -1,0 +1,115 @@
+@model IEnumerable<VendingMachineApp.Models.ViewModels.SmtpSettingViewModel>
+@{
+    ViewData["Title"] = "Manajemen SMTP Email";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="page-title mb-0">Pengaturan SMTP Email</h1>
+    <a href="@Url.Action("Create", "Smtp")" class="btn-vending py-1 px-3">
+        <i class="fas fa-plus me-1"></i>Tambah Konfigurasi
+    </a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="vending-table-container">
+            <div class="table-responsive">
+                <table class="table table-vending">
+                    <thead>
+                        <tr>
+                            <th>Host</th>
+                            <th>Port</th>
+                            <th>Sender Email</th>
+                            <th>Status Active</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var smtp in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="fw-bold">@smtp.Host</span>
+                                    </td>
+                                    <td>@smtp.Port</td>
+                                    <td>
+                                        <span class="text-info">@smtp.SenderEmail</span>
+                                    </td>
+                                    <td>
+                                        @if (smtp.IsActive)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        }
+                                    </td>
+                                    <td class="text-center text-nowrap">
+                                        <a href="@Url.Action("Edit", "Smtp", new { id = smtp.IdSmtp })" class="btn btn-sm btn-outline-info" title="Edit SMTP">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-white-50">Belum ada konfigurasi SMTP.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="vending-card">
+            <h4 class="text-info mb-3"><i class="fas fa-paper-plane me-2"></i>Test Kirim Email</h4>
+            <p class="text-white-50 small mb-4">Uji coba pengaturan SMTP yang sedang aktif dengan mengirimkan email test.</p>
+            
+            <form asp-action="TestEmail" method="post">
+                <div class="mb-3">
+                    <label for="toEmail" class="form-label text-white small fw-bold">Kirim Ke Email</label>
+                    <input type="email" id="toEmail" name="toEmail" class="form-control vending-form-control" placeholder="Tujuan email percobaan..." required />
+                </div>
+                
+                @{
+                    var hasActiveSmtp = Model != null && Model.Any(m => m.IsActive);
+                }
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn-vending" @(!hasActiveSmtp ? "disabled" : "")>
+                        <i class="fas fa-envelope-open-text me-2"></i>KIRIM TEST
+                    </button>
+                </div>
+                
+                @if (!hasActiveSmtp)
+                {
+                    <div class="alert alert-warning mt-3 bg-dark border-warning text-warning small p-2" role="alert">
+                        <i class="fas fa-exclamation-triangle me-1"></i> Tidak ada SMTP Aktif. Tambah atau aktifkan salah satu dari daftar.
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+</div>

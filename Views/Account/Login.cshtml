@@ -35,3 +35,22 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Pendaftaran Berhasil!',
+                    text: '@TempData["SuccessMessage"]',
+                    background: '#212529',
+                    color: '#fff',
+                    confirmButtonColor: '#0dcaf0'
+                });
+            });
+        </script>
+    }
+}

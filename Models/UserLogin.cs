@@ -14,6 +14,6 @@ namespace VendingMachineApp.Models
 
         public UserBalance? UserBalance { get; set; }
         public ICollection<BalanceHistory> BalanceHistories { get; set; } = new List<BalanceHistory>();
-        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public ICollection<UserTransaction> UserTransactions { get; set; } = new List<UserTransaction>();
     }
 }

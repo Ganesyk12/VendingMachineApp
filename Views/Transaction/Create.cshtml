@@ -1,4 +1,4 @@
-@model VendingMachineApp.Models.Transaction
+@model VendingMachineApp.Models.UserTransaction
 @{
     ViewData["Title"] = "Tambah Transaksi";
 }
@@ -25,8 +25,8 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label asp-for="IdProduct" class="form-label text-info small fw-bold">PRODUK</label>
-                        <select asp-for="IdProduct" class="form-select vending-form-control">
+                        <label class="form-label text-info small fw-bold">PRODUK</label>
+                        <select name="idProduct" class="form-select vending-form-control">
                             <option value="">-- Pilih Produk --</option>
                             @if (ViewData["Products"] is List<VendingMachineApp.Models.Product> products)
                             {
@@ -41,8 +41,8 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label asp-for="Amount" class="form-label text-info small fw-bold">NOMINAL (RP)</label>
-                        <input asp-for="Amount" id="Amount" class="form-control vending-form-control" type="text" autocomplete="off"/>
+                        <label asp-for="TotalAmount" class="form-label text-info small fw-bold">NOMINAL TOTAL (RP)</label>
+                        <input asp-for="TotalAmount" name="amount" id="TotalAmount" class="form-control vending-form-control" type="text" autocomplete="off"/>
                     </div>
 
                     <div class="col-md-6 mb-4">

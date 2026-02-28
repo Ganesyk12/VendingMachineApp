@@ -24,5 +24,9 @@ namespace VendingMachineApp.Models.ViewModels
         [Compare("Password")]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Kode verifikasi harus diisi.")]
+        [StringLength(6, MinimumLength = 6, ErrorMessage = "Kode verifikasi berupa 6 digit angka.")]
+        public string VerificationCode { get; set; } = string.Empty;
     }
 }

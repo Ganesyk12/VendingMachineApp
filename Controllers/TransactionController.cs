@@ -5,6 +5,11 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using VendingMachineApp.Services;
+using VendingMachineApp.Helpers;
 
 namespace VendingMachineApp.Controllers
 {
@@ -12,21 +17,36 @@ namespace VendingMachineApp.Controllers
     public class TransactionController : Controller
     {
         private readonly VendingMachineContext _context;
+        private readonly IEmailService _emailService;
 
-        public TransactionController(VendingMachineContext context)
+        public TransactionController(VendingMachineContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
-        // Menampilkan halaman Index yang berisi daftar transaksi
         public async Task<IActionResult> Index()
         {
-            var transactions = await _context.Transactions
+            var transactions = await _context.UserTransactions
                 .Include(t => t.User).ThenInclude(u => u.UserBalance)
-                .Include(t => t.Product)
                 .OrderByDescending(t => t.Date)
                 .ToListAsync();
             return View(transactions);
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var transaction = await _context.UserTransactions
+                .Include(t => t.User).ThenInclude(u => u.UserBalance)
+                .Include(t => t.TransactionDetails)
+                .ThenInclude(d => d.Product)
+                .FirstOrDefaultAsync(t => t.IdTransaction == id);
+
+            if (transaction == null) return NotFound();
+
+            return View(transaction);
         }
 
         // Menampilkan form untuk membuat transaksi baru (misalnya pembelian produk)
@@ -80,23 +100,37 @@ namespace VendingMachineApp.Controllers
 
             var today = DateTime.Today;
             var prefix = $"VM-{today:yyyyMMdd}-";
-            var countToday = await _context.Transactions
+            var countToday = await _context.UserTransactions
                 .CountAsync(t => t.Date >= today && t.Date < today.AddDays(1));
             string trxCode = $"{prefix}{(countToday + 1):D3}";
 
-            var transaction = new Transaction
+            var userTransaction = new UserTransaction
             {
                 IdUser = idUser,
-                IdProduct = idProduct,
-                Amount = amount,
-                Date = DateTime.Now,
                 TrxCode = trxCode,
+                TotalAmount = amount,
+                Date = DateTime.Now,
                 BalanceAfterTransaction = balanceAfterTransaction,
                 TransactionType = transactionType
             };
 
+            _context.UserTransactions.Add(userTransaction);
+
+            if (product != null)
+            {
+                var detail = new TransactionDetail
+                {
+                    UserTransaction = userTransaction,
+                    IdProduct = idProduct,
+                    Price = product.Price,
+                    Quantity = 1,
+                    SubTotal = amount
+                };
+                _context.TransactionDetails.Add(detail);
+                _context.Products.Update(product);
+            }
+
             user.UserBalance.Balance = balanceAfterTransaction;
-            _context.Transactions.Add(transaction);
 
             // Record Ledger
             var history = new BalanceHistory
@@ -113,6 +147,43 @@ namespace VendingMachineApp.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendReceiptEmail(int id)
+        {
+            var transaction = await _context.UserTransactions
+                .Include(t => t.User).ThenInclude(u => u.UserBalance)
+                .Include(t => t.TransactionDetails)
+                .ThenInclude(d => d.Product)
+                .FirstOrDefaultAsync(t => t.IdTransaction == id);
+
+            if (transaction == null || transaction.User == null)
+            {
+                return Json(new { success = false, message = "Transaksi tidak ditemukan." });
+            }
+
+            try
+            {
+                var pdfBytes = ReceiptPdfGenerator.Generate(transaction);
+                string fileName = $"Receipt_{transaction.TrxCode}.pdf";
+                string subject = $"Struk Transaksi - {transaction.TrxCode}";
+                string htmlMessage = MessageBuilder.BuildReceiptEmailBody(transaction);
+
+                bool isSent = await _emailService.SendEmailWithAttachmentAsync(
+                    transaction.User.UserName, subject, htmlMessage, pdfBytes, fileName);
+
+                if (isSent)
+                {
+                    return Json(new { success = true, message = "Struk PDF berhasil dikirim ke email Anda!" });
+                }
+
+                return Json(new { success = false, message = "Gagal mengirim email. Pastikan koneksi SMTP aktif." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Terjadi kesalahan sistem.", error = ex.Message });
+            }
         }
     }
 }

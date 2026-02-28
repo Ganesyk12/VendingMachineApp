@@ -95,9 +95,26 @@ public class HomeController : Controller
         // Process Transaction
         var today = DateTime.Today;
         var prefix = $"VM-{today:yyyyMMdd}-";
-        var countToday = await _context.Transactions
+        var countToday = await _context.UserTransactions
             .CountAsync(t => t.Date >= today && t.Date < today.AddDays(1));
         int seq = countToday + 1;
+
+        var trxCode = $"{prefix}{seq:D3}";
+
+        var userTransaction = new UserTransaction
+        {
+            IdUser = userId,
+            TrxCode = trxCode,
+            TotalAmount = totalCost,
+            Date = DateTime.Now,
+            BalanceAfterTransaction = userBalance.Balance - totalCost,
+            TransactionType = "Pembelian"
+        };
+
+        _context.UserTransactions.Add(userTransaction);
+
+        var details = new List<TransactionDetail>();
+        var descriptionItems = new List<string>();
 
         foreach (var item in request.Items)
         {
@@ -106,29 +123,35 @@ public class HomeController : Controller
 
             product.Quantity -= item.Quantity;
 
-            var transaction = new Transaction
+            var detail = new TransactionDetail
             {
-                IdUser = userId,
+                UserTransaction = userTransaction,
                 IdProduct = product.IdProduct,
-                Amount = product.Price * item.Quantity,
-                TransactionType = "Pembelian",
-                Date = DateTime.Now,
-                TrxCode = $"{prefix}{seq:D3}",
-                BalanceAfterTransaction = userBalance.Balance - (product.Price * item.Quantity)
+                Price = product.Price,
+                Quantity = item.Quantity,
+                SubTotal = product.Price * item.Quantity
             };
-            userBalance.Balance -= (product.Price * item.Quantity);
-            _context.Transactions.Add(transaction);
+            details.Add(detail);
+            descriptionItems.Add($"{product.Name} (x{item.Quantity})");
 
-            // Record to BalanceHistory
-            var history = new BalanceHistory
-            {
-                IdUser = userId,
-                CreditBalance = (product.Price * item.Quantity),
-                TransactionType = "Purchase",
-                Description = $"Pembelian {product.Name} x {item.Quantity}"
-            };
-            _context.BalanceHistories.Add(history);
+            _context.TransactionDetails.Add(detail);
         }
+
+        userBalance.Balance -= totalCost;
+
+        // Record to BalanceHistory once for the entire checkout
+        // To avoid making string too long, truncate if needed, or simply list items
+        var desc = $"Pembelian: {string.Join(", ", descriptionItems)}";
+        if (desc.Length > 255) desc = desc.Substring(0, 252) + "...";
+
+        var history = new BalanceHistory
+        {
+            IdUser = userId,
+            CreditBalance = totalCost,
+            TransactionType = "Purchase",
+            Description = desc
+        };
+        _context.BalanceHistories.Add(history);
 
         await _context.SaveChangesAsync();
         return Json(new { success = true, newBalance = userBalance.Balance });

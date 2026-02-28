@@ -1,11 +1,17 @@
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using VendingMachineApp.Models;
+using QuestPDF.Infrastructure;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
+QuestPDF.Settings.License = LicenseType.Community;
+
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Add Memory Cache for Verification Codes
+builder.Services.AddMemoryCache();
 
 // Add DbContext
 // Using MySQL
@@ -26,6 +32,7 @@ builder.Services.AddDbContext<VendingMachineContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<VendingMachineApp.Services.IEmailService, VendingMachineApp.Services.EmailService>();
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", options =>
     {

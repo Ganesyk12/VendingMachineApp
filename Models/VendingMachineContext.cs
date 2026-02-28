@@ -15,7 +15,8 @@ public class VendingMachineContext : DbContext
 
     public DbSet<UserLogin> UserLogins { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<Transaction> Transactions { get; set; }
+    public DbSet<UserTransaction> UserTransactions { get; set; }
+    public DbSet<TransactionDetail> TransactionDetails { get; set; }
     public DbSet<BalanceHistory> BalanceHistories { get; set; }
     public DbSet<UserBalance> UserBalances { get; set; }
     public DbSet<SmptpEmail> SmtpEmails { get; set; }
