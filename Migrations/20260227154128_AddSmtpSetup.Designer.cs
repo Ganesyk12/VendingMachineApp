@@ -20,7 +20,7 @@ namespace VendingMachineApp.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("vendingmachine")
+                .HasDefaultSchema("VendingMachine")
                 .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -71,7 +71,7 @@ namespace VendingMachineApp.Migrations
 
                     b.HasIndex("IdUser");
 
-                    b.ToTable("BalanceHistories", "vendingmachine");
+                    b.ToTable("BalanceHistories", "VendingMachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.Product", b =>
@@ -111,7 +111,7 @@ namespace VendingMachineApp.Migrations
 
                     b.HasKey("IdProduct");
 
-                    b.ToTable("Products", "vendingmachine");
+                    b.ToTable("Products", "VendingMachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.SmptpEmail", b =>
@@ -176,7 +176,7 @@ namespace VendingMachineApp.Migrations
 
                     b.HasKey("IdSmtp");
 
-                    b.ToTable("SmtpEmails", "vendingmachine");
+                    b.ToTable("SmtpEmails", "VendingMachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.Transaction", b =>
@@ -232,7 +232,7 @@ namespace VendingMachineApp.Migrations
 
                     b.HasIndex("IdUser");
 
-                    b.ToTable("Transactions", "vendingmachine");
+                    b.ToTable("Transactions", "VendingMachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.UserBalance", b =>
@@ -276,7 +276,7 @@ namespace VendingMachineApp.Migrations
                     b.HasIndex("IdUser")
                         .IsUnique();
 
-                    b.ToTable("UserBalances", "vendingmachine");
+                    b.ToTable("UserBalances", "VendingMachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.UserLogin", b =>
@@ -315,7 +315,7 @@ namespace VendingMachineApp.Migrations
 
                     b.HasKey("IdUser");
 
-                    b.ToTable("UserLogins", "vendingmachine");
+                    b.ToTable("UserLogins", "VendingMachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.BalanceHistory", b =>

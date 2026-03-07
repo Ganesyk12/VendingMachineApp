@@ -12,7 +12,7 @@ namespace VendingMachineApp.Migrations
         {
             migrationBuilder.AddColumn<string>(
                 name: "TrxCode",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "text",
                 nullable: true);
@@ -23,7 +23,7 @@ namespace VendingMachineApp.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "TrxCode",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions");
         }
     }

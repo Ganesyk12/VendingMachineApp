@@ -27,56 +27,56 @@ namespace VendingMachineApp.Migrations
                 table: "Transactions");
 
             migrationBuilder.EnsureSchema(
-                name: "vendingmachine");
+                name: "VendingMachine");
 
             migrationBuilder.RenameTable(
                 name: "Users",
                 newName: "Users",
-                newSchema: "vendingmachine");
+                newSchema: "VendingMachine");
 
             migrationBuilder.RenameTable(
                 name: "Transactions",
                 newName: "Transactions",
-                newSchema: "vendingmachine");
+                newSchema: "VendingMachine");
 
             migrationBuilder.RenameTable(
                 name: "Products",
                 newName: "Products",
-                newSchema: "vendingmachine");
+                newSchema: "VendingMachine");
 
             migrationBuilder.RenameColumn(
                 name: "UserId",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 newName: "IdUser");
 
             migrationBuilder.RenameIndex(
                 name: "IX_Transactions_UserId",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 newName: "IX_Transactions_IdUser");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_IdProduct",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 column: "IdProduct");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Transactions_Products_IdProduct",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 column: "IdProduct",
-                principalSchema: "vendingmachine",
+                principalSchema: "VendingMachine",
                 principalTable: "Products",
                 principalColumn: "IdProduct");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Transactions_Users_IdUser",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 column: "IdUser",
-                principalSchema: "vendingmachine",
+                principalSchema: "VendingMachine",
                 principalTable: "Users",
                 principalColumn: "UserId",
                 onDelete: ReferentialAction.Cascade);
@@ -87,32 +87,32 @@ namespace VendingMachineApp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_Transactions_Products_IdProduct",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Transactions_Users_IdUser",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions");
 
             migrationBuilder.DropIndex(
                 name: "IX_Transactions_IdProduct",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions");
 
             migrationBuilder.RenameTable(
                 name: "Users",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 newName: "Users");
 
             migrationBuilder.RenameTable(
                 name: "Transactions",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 newName: "Transactions");
 
             migrationBuilder.RenameTable(
                 name: "Products",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 newName: "Products");
 
             migrationBuilder.RenameColumn(

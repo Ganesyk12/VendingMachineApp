@@ -14,16 +14,16 @@ namespace VendingMachineApp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_Transactions_Users_IdUser",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions");
 
             migrationBuilder.DropTable(
                 name: "Users",
-                schema: "vendingmachine");
+                schema: "VendingMachine");
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "Date",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "timestamp without time zone",
                 nullable: false,
@@ -32,7 +32,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "timestamp without time zone",
                 nullable: false,
@@ -40,14 +40,14 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "timestamp without time zone",
                 nullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "integer",
                 nullable: false,
@@ -55,21 +55,21 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AddColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "text",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "text",
                 nullable: true);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "timestamp without time zone",
                 nullable: false,
@@ -77,14 +77,14 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "timestamp without time zone",
                 nullable: true);
 
             migrationBuilder.AddColumn<int>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "integer",
                 nullable: false,
@@ -92,21 +92,21 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AddColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "text",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "text",
                 nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "UserLogins",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 columns: table => new
                 {
                     IdUser = table.Column<int>(type: "integer", nullable: false)
@@ -126,7 +126,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.CreateTable(
                 name: "BalanceHistories",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 columns: table => new
                 {
                     IdBalanceHistory = table.Column<int>(type: "integer", nullable: false)
@@ -148,7 +148,7 @@ namespace VendingMachineApp.Migrations
                     table.ForeignKey(
                         name: "FK_BalanceHistories_UserLogins_IdUser",
                         column: x => x.IdUser,
-                        principalSchema: "vendingmachine",
+                        principalSchema: "VendingMachine",
                         principalTable: "UserLogins",
                         principalColumn: "IdUser",
                         onDelete: ReferentialAction.Cascade);
@@ -156,7 +156,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserBalances",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 columns: table => new
                 {
                     IdUserBalance = table.Column<int>(type: "integer", nullable: false)
@@ -176,7 +176,7 @@ namespace VendingMachineApp.Migrations
                     table.ForeignKey(
                         name: "FK_UserBalances_UserLogins_IdUser",
                         column: x => x.IdUser,
-                        principalSchema: "vendingmachine",
+                        principalSchema: "VendingMachine",
                         principalTable: "UserLogins",
                         principalColumn: "IdUser",
                         onDelete: ReferentialAction.Cascade);
@@ -184,23 +184,23 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_BalanceHistories_IdUser",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "BalanceHistories",
                 column: "IdUser");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserBalances_IdUser",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserBalances",
                 column: "IdUser",
                 unique: true);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Transactions_UserLogins_IdUser",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 column: "IdUser",
-                principalSchema: "vendingmachine",
+                principalSchema: "VendingMachine",
                 principalTable: "UserLogins",
                 principalColumn: "IdUser",
                 onDelete: ReferentialAction.Cascade);
@@ -211,74 +211,74 @@ namespace VendingMachineApp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_Transactions_UserLogins_IdUser",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions");
 
             migrationBuilder.DropTable(
                 name: "BalanceHistories",
-                schema: "vendingmachine");
+                schema: "VendingMachine");
 
             migrationBuilder.DropTable(
                 name: "UserBalances",
-                schema: "vendingmachine");
+                schema: "VendingMachine");
 
             migrationBuilder.DropTable(
                 name: "UserLogins",
-                schema: "vendingmachine");
+                schema: "VendingMachine");
 
             migrationBuilder.DropColumn(
                 name: "DateCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions");
 
             migrationBuilder.DropColumn(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions");
 
             migrationBuilder.DropColumn(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions");
 
             migrationBuilder.DropColumn(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions");
 
             migrationBuilder.DropColumn(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions");
 
             migrationBuilder.DropColumn(
                 name: "DateCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products");
 
             migrationBuilder.DropColumn(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products");
 
             migrationBuilder.DropColumn(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products");
 
             migrationBuilder.DropColumn(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products");
 
             migrationBuilder.DropColumn(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products");
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "Date",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "timestamp with time zone",
                 nullable: false,
@@ -287,7 +287,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Users",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "integer", nullable: false)
@@ -302,10 +302,10 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Transactions_Users_IdUser",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 column: "IdUser",
-                principalSchema: "vendingmachine",
+                principalSchema: "VendingMachine",
                 principalTable: "Users",
                 principalColumn: "UserId",
                 onDelete: ReferentialAction.Cascade);

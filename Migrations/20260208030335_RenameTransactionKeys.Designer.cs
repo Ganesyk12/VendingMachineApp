@@ -20,7 +20,7 @@ namespace VendingMachineApp.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("vendingmachine")
+                .HasDefaultSchema("VendingMachine")
                 .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -45,7 +45,7 @@ namespace VendingMachineApp.Migrations
 
                     b.HasKey("IdProduct");
 
-                    b.ToTable("Products", "vendingmachine");
+                    b.ToTable("Products", "VendingMachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.Transaction", b =>
@@ -80,7 +80,7 @@ namespace VendingMachineApp.Migrations
 
                     b.HasIndex("IdUser");
 
-                    b.ToTable("Transactions", "vendingmachine");
+                    b.ToTable("Transactions", "VendingMachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.User", b =>
@@ -99,7 +99,7 @@ namespace VendingMachineApp.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users", "vendingmachine");
+                    b.ToTable("Users", "VendingMachine");
                 });
 
             modelBuilder.Entity("VendingMachineApp.Models.Transaction", b =>

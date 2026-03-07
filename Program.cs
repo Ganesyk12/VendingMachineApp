@@ -26,7 +26,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddDbContext<VendingMachineContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("VendingMachineContext"),
-        x => x.MigrationsHistoryTable("__EFMigrationsHistory", "vendingmachine"))
+        x => x.MigrationsHistoryTable("__EFMigrationsHistory", "VendingMachine"))
 );
 
 // Add services to the container.

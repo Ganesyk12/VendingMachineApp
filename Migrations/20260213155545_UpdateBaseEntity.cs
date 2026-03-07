@@ -13,7 +13,7 @@ namespace VendingMachineApp.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserLogins",
                 type: "text",
                 nullable: false,
@@ -24,7 +24,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserLogins",
                 type: "text",
                 nullable: false,
@@ -35,7 +35,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserLogins",
                 type: "text",
                 nullable: false,
@@ -44,7 +44,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserLogins",
                 type: "timestamp without time zone",
                 nullable: false,
@@ -55,7 +55,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserBalances",
                 type: "text",
                 nullable: false,
@@ -66,7 +66,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserBalances",
                 type: "text",
                 nullable: false,
@@ -77,7 +77,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserBalances",
                 type: "text",
                 nullable: false,
@@ -86,7 +86,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserBalances",
                 type: "timestamp without time zone",
                 nullable: false,
@@ -97,7 +97,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "text",
                 nullable: false,
@@ -108,7 +108,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "text",
                 nullable: false,
@@ -119,7 +119,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "text",
                 nullable: false,
@@ -128,7 +128,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "timestamp without time zone",
                 nullable: false,
@@ -139,7 +139,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "text",
                 nullable: false,
@@ -150,7 +150,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "text",
                 nullable: false,
@@ -161,7 +161,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "text",
                 nullable: false,
@@ -170,7 +170,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "timestamp without time zone",
                 nullable: false,
@@ -181,7 +181,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "BalanceHistories",
                 type: "text",
                 nullable: false,
@@ -192,7 +192,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "BalanceHistories",
                 type: "text",
                 nullable: false,
@@ -203,7 +203,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "BalanceHistories",
                 type: "text",
                 nullable: false,
@@ -212,7 +212,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "BalanceHistories",
                 type: "timestamp without time zone",
                 nullable: false,
@@ -227,7 +227,7 @@ namespace VendingMachineApp.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserLogins",
                 type: "text",
                 nullable: true,
@@ -236,7 +236,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserLogins",
                 type: "text",
                 nullable: true,
@@ -245,7 +245,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<int>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserLogins",
                 type: "integer",
                 nullable: false,
@@ -254,7 +254,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserLogins",
                 type: "timestamp without time zone",
                 nullable: true,
@@ -263,7 +263,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserBalances",
                 type: "text",
                 nullable: true,
@@ -272,7 +272,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserBalances",
                 type: "text",
                 nullable: true,
@@ -281,7 +281,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<int>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserBalances",
                 type: "integer",
                 nullable: false,
@@ -290,7 +290,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserBalances",
                 type: "timestamp without time zone",
                 nullable: true,
@@ -299,7 +299,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "text",
                 nullable: true,
@@ -308,7 +308,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "text",
                 nullable: true,
@@ -317,7 +317,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<int>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "integer",
                 nullable: false,
@@ -326,7 +326,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 type: "timestamp without time zone",
                 nullable: true,
@@ -335,7 +335,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "text",
                 nullable: true,
@@ -344,7 +344,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "text",
                 nullable: true,
@@ -353,7 +353,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<int>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "integer",
                 nullable: false,
@@ -362,7 +362,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Products",
                 type: "timestamp without time zone",
                 nullable: true,
@@ -371,7 +371,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "BalanceHistories",
                 type: "text",
                 nullable: true,
@@ -380,7 +380,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserCreated",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "BalanceHistories",
                 type: "text",
                 nullable: true,
@@ -389,7 +389,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<int>(
                 name: "Status",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "BalanceHistories",
                 type: "integer",
                 nullable: false,
@@ -398,7 +398,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "DateModified",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "BalanceHistories",
                 type: "timestamp without time zone",
                 nullable: true,

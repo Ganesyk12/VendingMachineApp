@@ -24,7 +24,7 @@ public class VendingMachineContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.HasDefaultSchema("vendingmachine");
+        modelBuilder.HasDefaultSchema("VendingMachine");
     }
 
     public override int SaveChanges()

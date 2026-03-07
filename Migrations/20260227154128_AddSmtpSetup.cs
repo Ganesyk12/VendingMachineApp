@@ -14,7 +14,7 @@ namespace VendingMachineApp.Migrations
         {
             migrationBuilder.CreateTable(
                 name: "SmtpEmails",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 columns: table => new
                 {
                     IdSmtp = table.Column<int>(type: "integer", nullable: false)
@@ -44,7 +44,7 @@ namespace VendingMachineApp.Migrations
         {
             migrationBuilder.DropTable(
                 name: "SmtpEmails",
-                schema: "vendingmachine");
+                schema: "VendingMachine");
         }
     }
 }

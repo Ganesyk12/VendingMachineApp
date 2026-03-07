@@ -14,11 +14,11 @@ namespace VendingMachineApp.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Transactions",
-                schema: "vendingmachine");
+                schema: "VendingMachine");
 
             migrationBuilder.CreateTable(
                 name: "UserTransactions",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 columns: table => new
                 {
                     IdTransaction = table.Column<int>(type: "integer", nullable: false)
@@ -41,7 +41,7 @@ namespace VendingMachineApp.Migrations
                     table.ForeignKey(
                         name: "FK_UserTransactions_UserLogins_IdUser",
                         column: x => x.IdUser,
-                        principalSchema: "vendingmachine",
+                        principalSchema: "VendingMachine",
                         principalTable: "UserLogins",
                         principalColumn: "IdUser",
                         onDelete: ReferentialAction.Cascade);
@@ -49,7 +49,7 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.CreateTable(
                 name: "TransactionDetails",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 columns: table => new
                 {
                     IdDetail = table.Column<int>(type: "integer", nullable: false)
@@ -71,13 +71,13 @@ namespace VendingMachineApp.Migrations
                     table.ForeignKey(
                         name: "FK_TransactionDetails_Products_IdProduct",
                         column: x => x.IdProduct,
-                        principalSchema: "vendingmachine",
+                        principalSchema: "VendingMachine",
                         principalTable: "Products",
                         principalColumn: "IdProduct");
                     table.ForeignKey(
                         name: "FK_TransactionDetails_UserTransactions_IdTransaction",
                         column: x => x.IdTransaction,
-                        principalSchema: "vendingmachine",
+                        principalSchema: "VendingMachine",
                         principalTable: "UserTransactions",
                         principalColumn: "IdTransaction",
                         onDelete: ReferentialAction.Cascade);
@@ -85,19 +85,19 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionDetails_IdProduct",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "TransactionDetails",
                 column: "IdProduct");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TransactionDetails_IdTransaction",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "TransactionDetails",
                 column: "IdTransaction");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserTransactions_IdUser",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "UserTransactions",
                 column: "IdUser");
         }
@@ -107,15 +107,15 @@ namespace VendingMachineApp.Migrations
         {
             migrationBuilder.DropTable(
                 name: "TransactionDetails",
-                schema: "vendingmachine");
+                schema: "VendingMachine");
 
             migrationBuilder.DropTable(
                 name: "UserTransactions",
-                schema: "vendingmachine");
+                schema: "VendingMachine");
 
             migrationBuilder.CreateTable(
                 name: "Transactions",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 columns: table => new
                 {
                     TransactionId = table.Column<int>(type: "integer", nullable: false)
@@ -139,13 +139,13 @@ namespace VendingMachineApp.Migrations
                     table.ForeignKey(
                         name: "FK_Transactions_Products_IdProduct",
                         column: x => x.IdProduct,
-                        principalSchema: "vendingmachine",
+                        principalSchema: "VendingMachine",
                         principalTable: "Products",
                         principalColumn: "IdProduct");
                     table.ForeignKey(
                         name: "FK_Transactions_UserLogins_IdUser",
                         column: x => x.IdUser,
-                        principalSchema: "vendingmachine",
+                        principalSchema: "VendingMachine",
                         principalTable: "UserLogins",
                         principalColumn: "IdUser",
                         onDelete: ReferentialAction.Cascade);
@@ -153,13 +153,13 @@ namespace VendingMachineApp.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_IdProduct",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 column: "IdProduct");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_IdUser",
-                schema: "vendingmachine",
+                schema: "VendingMachine",
                 table: "Transactions",
                 column: "IdUser");
         }
