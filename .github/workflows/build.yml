@@ -9,6 +9,7 @@ jobs:
   build:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
+    environment: production
     outputs:
       image_tag: ${{ steps.meta.outputs.image_tag }}
       container_name: ${{ steps.meta.outputs.container_name }}
