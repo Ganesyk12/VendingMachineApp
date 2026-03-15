@@ -1,4 +1,4 @@
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using VendingMachineApp.Models;
 using QuestPDF.Infrastructure;
@@ -7,6 +7,7 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 QuestPDF.Settings.License = LicenseType.Community;
 
+DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -23,9 +24,22 @@ builder.Services.AddMemoryCache();
 // );
 
 // Using PostgreSQL
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" +
+                       $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
+                       $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
+                       $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
+                       $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};" +
+                       $"Search Path={Environment.GetEnvironmentVariable("DB_SEARCH_PATH")};" +
+                       "Ssl Mode=Prefer;Trust Server Certificate=true";
+}
+
 builder.Services.AddDbContext<VendingMachineContext>(options =>
     options.UseNpgsql(
-        builder.Configuration.GetConnectionString("VendingMachineContext"),
+        connectionString,
         x => x.MigrationsHistoryTable("__EFMigrationsHistory", "VendingMachine"))
 );
 
