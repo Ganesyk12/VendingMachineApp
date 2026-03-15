@@ -47,13 +47,25 @@ jobs:
             docker stop "$CONTAINER_NAME" || true
             docker rm "$CONTAINER_NAME" || true
             
-            # Run the new container with injected connection string
+            # Generate random port between 5000 and 8500
+            while :
+            do
+              PORT_HOST=$(( ( RANDOM % 3500 ) + 5000 ))
+              if ! ss -tuln | grep -q ":$PORT_HOST "; then
+                break
+              fi
+            done
+            echo "Random available port selected: $PORT_HOST"
+
+            # Run the new container with injected connection string and network tunnel
             docker run -d \
               --name "$CONTAINER_NAME" \
-              -p 8080:8080 \
+              -p ${PORT_HOST}:8080 \
+              --network tunnel \
               -e DB_CONNECTION_STRING="${{ secrets.DB_CONNECTION_STRING }}" \
               --restart always \
               "$IMAGE_NAME"
             
             # Cleanup old images
             docker image prune -f
+            echo "Deployment completed successfully on port $PORT_HOST."
