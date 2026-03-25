@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -32,20 +32,29 @@
                         <li class="nav-item">
                             <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Product" ? "active" : "")" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
-                        </li>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("VendingApps-PDA"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Product" ? "active" : "")" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Transaction" ? "active" : "")" asp-area="" asp-controller="Transaction" asp-action="Index">Transaction</a>
                         </li>
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "UserManagement" ? "active" : "")" asp-area="" asp-controller="UserManagement" asp-action="Index">User Management</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Smtp" ? "active" : "")" asp-area="" asp-controller="Smtp" asp-action="Index">SMTP Settings</a>
-                            </li>
+                            @if (User.IsInRole("VendingApps-SA"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "UserManagement" ? "active" : "")" asp-area="" asp-controller="UserManagement" asp-action="Index">User Management</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "UserRole" ? "active" : "")" asp-area="" asp-controller="UserRole" asp-action="Index">User Role</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Smtp" ? "active" : "")" asp-area="" asp-controller="Smtp" asp-action="Index">SMTP Settings</a>
+                                </li>
+                            }
                         }
                     </ul>
                     <ul class="navbar-nav">

@@ -8,7 +8,7 @@ using VendingMachineApp.Helpers;
 
 namespace VendingMachineApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "VendingApps-SA")]
     public class SmtpController : Controller
     {
         private readonly VendingMachineContext _context;

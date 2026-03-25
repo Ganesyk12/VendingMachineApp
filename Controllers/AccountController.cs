@@ -144,7 +144,9 @@ namespace VendingMachineApp.Controllers
       {
          if (ModelState.IsValid)
          {
-            var user = await _context.UserLogins.Include(u => u.UserBalance)
+            var user = await _context.UserLogins
+               .Include(u => u.UserBalance)
+               .Include(u => u.UserRoles)
                .FirstOrDefaultAsync(u => u.UserName == model.Email);
             if (user != null && BC.Verify(model.Password, user.Password))
             {
@@ -154,6 +156,14 @@ namespace VendingMachineApp.Controllers
                   new Claim(ClaimTypes.Email, user.UserName),
                   new Claim("UserId", user.IdUser.ToString())
                };
+
+               if (user.UserRoles != null)
+               {
+                  foreach (var role in user.UserRoles)
+                  {
+                     claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+                  }
+               }
 
                var identity = new ClaimsIdentity(claims, "CookieAuth");
                var principal = new ClaimsPrincipal(identity);

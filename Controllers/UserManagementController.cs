@@ -7,7 +7,7 @@ using BC = BCrypt.Net.BCrypt;
 
 namespace VendingMachineApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "VendingApps-SA")]
     public class UserManagementController : Controller
     {
         private readonly VendingMachineContext _context;

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace VendingMachineApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "VendingApps-PDA")]
     public class ProductController : Controller
     {
         private readonly VendingMachineContext _context;

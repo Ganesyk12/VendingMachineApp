@@ -20,6 +20,7 @@ public class VendingMachineContext : DbContext
     public DbSet<BalanceHistory> BalanceHistories { get; set; }
     public DbSet<UserBalance> UserBalances { get; set; }
     public DbSet<SmptpEmail> SmtpEmails { get; set; }
+    public DbSet<UserRole> UserRoles { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

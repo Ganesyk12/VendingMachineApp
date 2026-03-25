@@ -1,0 +1,37 @@
+@model VendingMachineApp.Models.ViewModels.UserRoleCreateViewModel
+@{
+    ViewData["Title"] = "Tambah Role User";
+}
+
+<div class="mb-4">
+    <h1 class="page-title">Tambah Role User</h1>
+</div>
+
+<div class="vending-card p-4">
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        
+        <div class="mb-3">
+            <label asp-for="IdUser" class="form-label text-white-50"></label>
+            <select asp-for="IdUser" asp-items="Model.UserList" class="form-select bg-dark text-white border-info shadow-sm">
+                <option value="">-- Pilih User --</option>
+            </select>
+            <span asp-validation-for="IdUser" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="RoleName" class="form-label text-white-50"></label>
+            <input asp-for="RoleName" class="form-control bg-dark text-white border-info shadow-sm" placeholder="Contoh: Admin, Operator, User"/>
+            <span asp-validation-for="RoleName" class="text-danger small"></span>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+            <a asp-action="Index" class="btn btn-outline-light me-2 py-1 px-4">Kembali</a>
+            <button type="submit" class="btn-vending py-1 px-4">Simpan</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
