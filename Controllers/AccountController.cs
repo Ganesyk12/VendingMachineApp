@@ -147,7 +147,8 @@ namespace VendingMachineApp.Controllers
             var user = await _context.UserLogins
                .Include(u => u.UserBalance)
                .Include(u => u.UserRoles)
-               .FirstOrDefaultAsync(u => u.UserName == model.Email);
+               .FirstOrDefaultAsync(u => u.UserName == model.Email && u.Status == "A");
+            
             if (user != null && BC.Verify(model.Password, user.Password))
             {
                var claims = new List<Claim>
@@ -159,7 +160,7 @@ namespace VendingMachineApp.Controllers
 
                if (user.UserRoles != null)
                {
-                  foreach (var role in user.UserRoles)
+                  foreach (var role in user.UserRoles.Where(r => r.Status == "A"))
                   {
                      claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
                   }

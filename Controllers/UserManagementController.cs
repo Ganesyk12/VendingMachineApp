@@ -27,7 +27,8 @@ namespace VendingMachineApp.Controllers
                     IdUser = u.IdUser,
                     UserName = u.UserName,
                     Name = u.UserBalance != null ? u.UserBalance.Name : "N/A",
-                    Balance = u.UserBalance != null ? u.UserBalance.Balance : 0
+                    Balance = u.UserBalance != null ? u.UserBalance.Balance : 0,
+                    Status = u.Status
                 })
                 .ToListAsync();
 
@@ -57,7 +58,8 @@ namespace VendingMachineApp.Controllers
                 var user = new UserLogin
                 {
                     UserName = model.Email,
-                    Password = BC.HashPassword(model.Password)
+                    Password = BC.HashPassword(model.Password),
+                    Status = model.Status
                 };
 
                 _context.UserLogins.Add(user);
@@ -99,7 +101,8 @@ namespace VendingMachineApp.Controllers
             {
                 IdUser = user.IdUser,
                 Email = user.UserName,
-                Name = user.UserBalance?.Name ?? string.Empty
+                Name = user.UserBalance?.Name ?? string.Empty,
+                Status = user.Status
             };
 
             return View(model);
@@ -141,6 +144,8 @@ namespace VendingMachineApp.Controllers
 
                         userToUpdate.UserName = model.Email;
                     }
+
+                    userToUpdate.Status = model.Status;
 
                     if (!string.IsNullOrEmpty(model.Password))
                     {

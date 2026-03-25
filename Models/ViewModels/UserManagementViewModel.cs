@@ -8,6 +8,7 @@ namespace VendingMachineApp.Models.ViewModels
         public string UserName { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public decimal Balance { get; set; }
+        public string Status { get; set; } = "A";
     }
 
     public class UserCreateViewModel
@@ -31,6 +32,9 @@ namespace VendingMachineApp.Models.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Konfirmasi Password")]
         public string ConfirmPassword { get; set; } = string.Empty;
+
+        [Display(Name = "Status")]
+        public string Status { get; set; } = "A";
     }
 
     public class UserEditViewModel
@@ -54,5 +58,8 @@ namespace VendingMachineApp.Models.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Konfirmasi Password Baru")]
         public string? ConfirmPassword { get; set; }
+
+        [Display(Name = "Status")]
+        public string Status { get; set; } = "A";
     }
 }

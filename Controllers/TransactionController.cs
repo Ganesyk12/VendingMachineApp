@@ -27,16 +27,32 @@ namespace VendingMachineApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var transactions = await _context.UserTransactions
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId)) return Unauthorized();
+
+            var isSuperAdmin = User.IsInRole("VendingApps-SA");
+
+            var query = _context.UserTransactions
                 .Include(t => t.User).ThenInclude(u => u.UserBalance)
                 .OrderByDescending(t => t.Date)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (!isSuperAdmin)
+            {
+                query = query.Where(t => t.IdUser == userId);
+            }
+
+            var transactions = await query.ToListAsync();
             return View(transactions);
         }
 
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
+
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId)) return Unauthorized();
+            var isSuperAdmin = User.IsInRole("VendingApps-SA");
 
             var transaction = await _context.UserTransactions
                 .Include(t => t.User).ThenInclude(u => u.UserBalance)
@@ -46,10 +62,16 @@ namespace VendingMachineApp.Controllers
 
             if (transaction == null) return NotFound();
 
+            if (!isSuperAdmin && transaction.IdUser != userId)
+            {
+                return Forbid();
+            }
+
             return View(transaction);
         }
 
         // Menampilkan form untuk membuat transaksi baru (misalnya pembelian produk)
+        [Authorize(Roles = "VendingApps-SA")]
         public async Task<IActionResult> Create()
         {
             ViewData["Users"] = await _context.UserLogins.ToListAsync();
@@ -58,6 +80,7 @@ namespace VendingMachineApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "VendingApps-SA")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int idUser, int? idProduct, decimal amount, string transactionType)
         {
@@ -152,6 +175,10 @@ namespace VendingMachineApp.Controllers
         [HttpPost]
         public async Task<IActionResult> SendReceiptEmail(int id)
         {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId)) return Unauthorized();
+            var isSuperAdmin = User.IsInRole("VendingApps-SA");
+
             var transaction = await _context.UserTransactions
                 .Include(t => t.User).ThenInclude(u => u.UserBalance)
                 .Include(t => t.TransactionDetails)
@@ -161,6 +188,11 @@ namespace VendingMachineApp.Controllers
             if (transaction == null || transaction.User == null)
             {
                 return Json(new { success = false, message = "Transaksi tidak ditemukan." });
+            }
+
+            if (!isSuperAdmin && transaction.IdUser != userId)
+            {
+                return Json(new { success = false, message = "Anda tidak memiliki akses ke transaksi ini." });
             }
 
             try

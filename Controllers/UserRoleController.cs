@@ -18,16 +18,27 @@ namespace VendingMachineApp.Controllers
         }
 
         // GET: UserRole
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? userId)
         {
-            var roles = await _context.UserRoles
+            var query = _context.UserRoles
                 .Include(u => u.UserLogin)
-                .Select(r => new UserRoleListViewModel
+                .AsQueryable();
+
+            if (userId != null)
+            {
+                query = query.Where(r => r.IdUser == userId);
+                var user = await _context.UserLogins.FindAsync(userId);
+                ViewBag.UserId = userId;
+                ViewBag.UserName = user?.UserName ?? "User";
+            }
+
+            var roles = await query.Select(r => new UserRoleListViewModel
                 {
                     IdUserRole = r.IdUserRole,
                     IdUser = r.IdUser,
                     UserName = r.UserLogin != null ? r.UserLogin.UserName : "Unknown",
-                    RoleName = r.RoleName
+                    RoleName = r.RoleName,
+                    Status = r.Status
                 })
                 .ToListAsync();
 
@@ -35,11 +46,13 @@ namespace VendingMachineApp.Controllers
         }
 
         // GET: UserRole/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? userId)
         {
             var model = new UserRoleCreateViewModel
             {
-                UserList = await GetUserSelectList()
+                IdUser = userId ?? 0,
+                UserList = await GetUserSelectList(),
+                Status = "A"
             };
             return View(model);
         }
@@ -60,7 +73,7 @@ namespace VendingMachineApp.Controllers
                 _context.UserRoles.Add(userRole);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Role berhasil ditambahkan.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { userId = userRole.IdUser });
             }
 
             model.UserList = await GetUserSelectList();
@@ -130,7 +143,7 @@ namespace VendingMachineApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { userId = model.IdUser });
             }
 
             model.UserList = await GetUserSelectList();
@@ -145,9 +158,11 @@ namespace VendingMachineApp.Controllers
             var userRole = await _context.UserRoles.FindAsync(id);
             if (userRole != null)
             {
+                int userId = userRole.IdUser;
                 _context.UserRoles.Remove(userRole);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Role berhasil dihapus.";
+                return RedirectToAction(nameof(Index), new { userId = userId });
             }
 
             return RedirectToAction(nameof(Index));

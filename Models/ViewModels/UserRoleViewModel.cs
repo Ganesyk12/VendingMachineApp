@@ -9,6 +9,7 @@ namespace VendingMachineApp.Models.ViewModels
         public int IdUser { get; set; }
         public string UserName { get; set; } = string.Empty;
         public string RoleName { get; set; } = string.Empty;
+        public string Status { get; set; } = "A";
     }
 
     public class UserRoleCreateViewModel
@@ -21,6 +22,9 @@ namespace VendingMachineApp.Models.ViewModels
         [Display(Name = "Nama Role")]
         [StringLength(50)]
         public string RoleName { get; set; } = string.Empty;
+
+        [Display(Name = "Status")]
+        public string Status { get; set; } = "A";
 
         public List<SelectListItem>? UserList { get; set; }
     }
@@ -37,6 +41,9 @@ namespace VendingMachineApp.Models.ViewModels
         [Display(Name = "Nama Role")]
         [StringLength(50)]
         public string RoleName { get; set; } = string.Empty;
+
+        [Display(Name = "Status")]
+        public string Status { get; set; } = "A";
 
         public List<SelectListItem>? UserList { get; set; }
     }

@@ -26,6 +26,7 @@
                 <th>Nama</th>
                 <th>Email</th>
                 <th>Saldo</th>
+                <th>Status</th>
                 <th class="text-center">Aksi</th>
             </tr>
             </thead>
@@ -44,7 +45,15 @@
                         <td>
                             <span class="text-info">Rp @user.Balance.ToString("N0")</span>
                         </td>
+                        <td>
+                            <span class="badge @(user.Status == "A" ? "bg-success" : "bg-danger")">
+                                @(user.Status == "A" ? "Active" : "Inactive")
+                            </span>
+                        </td>
                         <td class="text-center text-nowrap">
+                            <a href="@Url.Action("Index", "UserRole", new { userId = user.IdUser })" class="btn btn-sm btn-outline-warning me-2" title="Kelola Role">
+                                <i class="fas fa-user-tag text-warning me-1"></i>
+                            </a>
                             <a href="@Url.Action("Edit", "UserManagement", new { id = user.IdUser })" class="btn btn-sm btn-outline-info me-2" title="Edit Pengguna">
                                 <i class="fas fa-edit"></i>
                             </a>
@@ -58,7 +67,7 @@
             else
             {
                 <tr>
-                    <td colspan="4" class="text-center py-4 text-white-50">Belum ada pengguna.</td>
+                    <td colspan="5" class="text-center py-4 text-white-50">Belum ada pengguna.</td>
                 </tr>
             }
             </tbody>

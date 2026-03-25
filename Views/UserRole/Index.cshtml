@@ -1,13 +1,29 @@
 @model IEnumerable<VendingMachineApp.Models.ViewModels.UserRoleListViewModel>
 @{
-    ViewData["Title"] = "Manajemen Role User";
+    int? filterUserId = ViewBag.UserId as int?;
+    string title = filterUserId != null ? "Kelola Role" : "Manajemen Role User";
+    ViewData["Title"] = title;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="page-title mb-0">Daftar Role User</h1>
-    <a href="@Url.Action("Create", "UserRole")" class="btn-vending py-1 px-3">
-        <i class="fas fa-plus me-1"></i>Tambah Role
-    </a>
+    <div>
+        <h1 class="page-title mb-0">@title</h1>
+        @if (filterUserId != null)
+        {
+            <h3 class="text-info mt-2 h5">@ViewBag.UserName</h3>
+        }
+    </div>
+    <div class="d-flex gap-2">
+        @if (filterUserId != null)
+        {
+            <a href="@Url.Action("Index", "UserManagement")" class="btn btn-outline-secondary py-1 px-3 mt-1">
+                <i class="fas fa-arrow-left me-1"></i> Kembali ke Daftar Pengguna
+            </a>
+        }
+        <a href="@Url.Action("Create", "UserRole", new { userId = filterUserId })" class="btn-vending py-1 px-3">
+            <i class="fas fa-plus me-1"></i>Tambah Role
+        </a>
+    </div>
 </div>
 
 @if (TempData["SuccessMessage"] != null)
@@ -23,8 +39,12 @@
         <table class="table table-vending">
             <thead>
             <tr>
-                <th>User</th>
+                @if (filterUserId == null)
+                {
+                    <th>User</th>
+                }
                 <th>Role</th>
+                <th>Status</th>
                 <th class="text-center">Aksi</th>
             </tr>
             </thead>
@@ -34,11 +54,19 @@
                 foreach (var item in Model)
                 {
                     <tr>
-                        <td>
-                            <span class="fw-bold text-white">@item.UserName</span>
-                        </td>
+                        @if (filterUserId == null)
+                        {
+                            <td>
+                                <span class="fw-bold text-white">@item.UserName</span>
+                            </td>
+                        }
                         <td>
                             <span class="badge bg-info text-dark">@item.RoleName</span>
+                        </td>
+                        <td>
+                            <span class="badge @(item.Status == "A" ? "bg-success" : "bg-secondary")">
+                                @(item.Status == "A" ? "Active" : "Inactive")
+                            </span>
                         </td>
                         <td class="text-center text-nowrap">
                             <a href="@Url.Action("Edit", "UserRole", new { id = item.IdUserRole })" class="btn btn-sm btn-outline-info me-2" title="Edit Role">
@@ -56,7 +84,7 @@
             else
             {
                 <tr>
-                    <td colspan="3" class="text-center py-4 text-white-50">Belum ada role yang ditugaskan.</td>
+                    <td colspan="@(filterUserId == null ? 4 : 3)" class="text-center py-4 text-white-50">Belum ada role yang ditugaskan.</td>
                 </tr>
             }
             </tbody>
