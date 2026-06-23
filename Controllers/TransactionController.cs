@@ -17,12 +17,12 @@ namespace VendingMachineApp.Controllers
     public class TransactionController : Controller
     {
         private readonly VendingMachineContext _context;
-        private readonly IEmailService _emailService;
+        private readonly IRedisService _redisService;
 
-        public TransactionController(VendingMachineContext context, IEmailService emailService)
+        public TransactionController(VendingMachineContext context, IRedisService redisService)
         {
             _context = context;
-            _emailService = emailService;
+            _redisService = redisService;
         }
 
         public async Task<IActionResult> Index()
@@ -202,15 +202,10 @@ namespace VendingMachineApp.Controllers
                 string subject = $"Struk Transaksi - {transaction.TrxCode}";
                 string htmlMessage = MessageBuilder.BuildReceiptEmailBody(transaction);
 
-                bool isSent = await _emailService.SendEmailWithAttachmentAsync(
+                await _redisService.PublishEmailAsync(
                     transaction.User.UserName, subject, htmlMessage, pdfBytes, fileName);
 
-                if (isSent)
-                {
-                    return Json(new { success = true, message = "Struk PDF berhasil dikirim ke email Anda!" });
-                }
-
-                return Json(new { success = false, message = "Gagal mengirim email. Pastikan koneksi SMTP aktif." });
+                return Json(new { success = true, message = "Struk PDF sedang dikirim ke email Anda!" });
             }
             catch (Exception ex)
             {

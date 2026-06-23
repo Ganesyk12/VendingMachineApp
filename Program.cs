@@ -1,6 +1,7 @@
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using VendingMachineApp.Models;
+using VendingMachineApp.Services;
 using QuestPDF.Infrastructure;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -10,9 +11,6 @@ QuestPDF.Settings.License = LicenseType.Community;
 DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
-
-// Add Memory Cache for Verification Codes
-builder.Services.AddMemoryCache();
 
 // Add DbContext
 // Using MySQL
@@ -43,10 +41,24 @@ builder.Services.AddDbContext<VendingMachineContext>(options =>
         x => x.MigrationsHistoryTable("__EFMigrationsHistory", "VendingMachine"))
 );
 
+// Add Redis as Message Broker
+var redisOptions = new RedisOptions
+{
+    Host = Environment.GetEnvironmentVariable("REDIS_HOST") ?? "localhost",
+    Port = int.Parse(Environment.GetEnvironmentVariable("REDIS_PORT") ?? "6379"),
+    Password = Environment.GetEnvironmentVariable("REDIS_PASSWORD") ?? "",
+    EmailStream = Environment.GetEnvironmentVariable("REDIS_STREAM_EMAIL") ?? "email_queue",
+    ConsumerGroup = Environment.GetEnvironmentVariable("REDIS_CONSUMER_GROUP") ?? "email_workers",
+    ConsumerName = Environment.GetEnvironmentVariable("REDIS_CONSUMER_NAME") ?? $"worker_{Environment.MachineName}"
+};
+builder.Services.AddSingleton(redisOptions);
+builder.Services.AddSingleton<IRedisService, RedisService>();
+builder.Services.AddHostedService<EmailBackgroundService>();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<VendingMachineApp.Services.IEmailService, VendingMachineApp.Services.EmailService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", options =>
     {
