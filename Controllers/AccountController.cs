@@ -140,6 +140,37 @@ namespace VendingMachineApp.Controllers
       }
 
       [HttpPost]
+      public async Task<IActionResult> SendLoginOtp([FromBody] Dictionary<string, string> data)
+      {
+         var email = data.GetValueOrDefault("email", "");
+         if (string.IsNullOrEmpty(email))
+            return Json(new { success = false, message = "Email tidak boleh kosong." });
+
+         var user = await _context.UserLogins
+            .Include(u => u.UserBalance)
+            .FirstOrDefaultAsync(u => u.UserName == email && u.Status == "A");
+
+         if (user == null)
+            return Json(new { success = false, message = "Email tidak terdaftar." });
+
+         var random = new Random();
+         var otpCode = random.Next(100000, 999999).ToString();
+
+         var cacheOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+         _cache.Set($"LoginOtp_{email}", otpCode, cacheOptions);
+
+         var name = user.UserBalance?.Name ?? user.UserName;
+         var htmlMessage = MessageBuilder.BuildLoginOtpEmailBody(name, otpCode);
+         var isSent = await _emailService.SendEmailAsync(email, "Kode OTP Login Vending App", htmlMessage);
+
+         if (isSent)
+            return Json(new { success = true, message = "Kode OTP berhasil dikirim ke email Anda." });
+
+         return Json(new { success = false, message = "Gagal mengirim email OTP. Pastikan SMTP Anda dikonfigurasi dengan benar." });
+      }
+
+      [HttpPost]
       public async Task<IActionResult> Login(LoginViewModel model)
       {
          if (ModelState.IsValid)
@@ -148,8 +179,47 @@ namespace VendingMachineApp.Controllers
                .Include(u => u.UserBalance)
                .Include(u => u.UserRoles)
                .FirstOrDefaultAsync(u => u.UserName == model.Email && u.Status == "A");
-            
-            if (user != null && BC.Verify(model.Password, user.Password))
+
+            if (user == null)
+            {
+               ModelState.AddModelError("", "Email tidak terdaftar.");
+               return View(model);
+            }
+
+            bool isValid = false;
+
+            if (model.LoginMode == "otp")
+            {
+               if (_cache.TryGetValue($"LoginOtp_{model.Email}", out string? storedOtp))
+               {
+                  if (storedOtp == model.VerificationCode)
+                  {
+                     isValid = true;
+                     _cache.Remove($"LoginOtp_{model.Email}");
+                  }
+                  else
+                  {
+                     ModelState.AddModelError("VerificationCode", "Kode OTP yang dimasukkan salah.");
+                  }
+               }
+               else
+               {
+                  ModelState.AddModelError("VerificationCode", "Kode OTP telah kadaluarsa. Silakan minta kode baru.");
+               }
+            }
+            else
+            {
+               if (!string.IsNullOrEmpty(model.Password) && BC.Verify(model.Password, user.Password))
+               {
+                  isValid = true;
+               }
+               else
+               {
+                  ModelState.AddModelError("", "Email atau Password salah.");
+               }
+            }
+
+            if (isValid)
             {
                var claims = new List<Claim>
                {
@@ -176,8 +246,6 @@ namespace VendingMachineApp.Controllers
 
                return RedirectToAction("Index", "Home");
             }
-
-            ModelState.AddModelError("", "Email atau Password salah.");
          }
 
          return View(model);

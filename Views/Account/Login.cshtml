@@ -8,22 +8,60 @@
         <div class="vending-card animate__animated animate__fadeInDown">
             <h2 class="page-title text-center mb-4"><i class="fas fa-lock me-2 text-info"></i>LOGIN</h2>
 
-            <form asp-action="Login" method="post">
+            <ul class="nav nav-tabs nav-justified mb-4" id="loginTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="password-tab" data-bs-toggle="tab" data-bs-target="#password-login" type="button" role="tab">
+                        <i class="fas fa-key me-1"></i>Password
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="otp-tab" data-bs-toggle="tab" data-bs-target="#otp-login" type="button" role="tab">
+                        <i class="fas fa-envelope me-1"></i>OTP Email
+                    </button>
+                </li>
+            </ul>
+
+            <form asp-action="Login" method="post" id="loginForm">
+                <input type="hidden" asp-for="LoginMode" id="LoginMode" />
                 <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
                 <div class="mb-3">
                     <label asp-for="Email" class="form-label text-info small fw-bold">EMAIL ADDRESS</label>
-                    <input asp-for="Email" class="form-control vending-form-control" placeholder="admin@example.com"/>
+                    <input asp-for="Email" class="form-control vending-form-control" placeholder="admin@example.com" id="Email" />
                     <span asp-validation-for="Email" class="text-danger small"></span>
                 </div>
 
-                <div class="mb-4">
-                    <label asp-for="Password" class="form-label text-info small fw-bold">PASSWORD</label>
-                    <input asp-for="Password" class="form-control vending-form-control" type="password" placeholder="••••••••"/>
-                    <span asp-validation-for="Password" class="text-danger small"></span>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="password-login" role="tabpanel">
+                        <div class="mb-4">
+                            <label asp-for="Password" class="form-label text-info small fw-bold">PASSWORD</label>
+                            <input asp-for="Password" class="form-control vending-form-control" type="password" placeholder="••••••••" id="Password" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="otp-login" role="tabpanel">
+                        <div class="mb-3">
+                            <button type="button" class="btn-vending w-100 mb-2" id="btnSendOtp">
+                                <i class="fas fa-paper-plane me-2"></i>KIRIM KODE OTP
+                            </button>
+                            <div id="otpTimer" class="text-center small text-muted d-none">
+                                <span>Kirim ulang dalam </span><span id="countdownDisplay" class="fw-bold text-info">60</span><span> detik</span>
+                            </div>
+                            <div id="otpResend" class="text-center d-none">
+                                <button type="button" class="btn btn-link text-info p-0" id="btnResendOtp">Kirim ulang OTP</button>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label asp-for="VerificationCode" class="form-label text-info small fw-bold">KODE OTP 6 DIGIT</label>
+                            <input asp-for="VerificationCode" class="form-control vending-form-control text-center fw-bold" type="text" maxlength="6" placeholder="000000" id="VerificationCode" style="font-size: 1.5rem; letter-spacing: 8px;" />
+                            <span asp-validation-for="VerificationCode" class="text-danger small"></span>
+                            <div id="otpStatus" class="small mt-1"></div>
+                        </div>
+                    </div>
                 </div>
 
-                <button type="submit" class="btn-vending w-100 mb-3">
+                <button type="submit" class="btn-vending w-100 mb-3" id="btnSubmit">
                     <i class="fas fa-sign-in-alt me-2"></i>MASUK
                 </button>
 
@@ -53,4 +91,88 @@
             });
         </script>
     }
+
+    <script>
+        let otpCountdown = null;
+        let otpSeconds = 0;
+
+        function switchLoginMode(mode) {
+            document.getElementById("LoginMode").value = mode;
+            if (mode === "otp") {
+                document.getElementById("Password").removeAttribute("required");
+                document.getElementById("Password").removeAttribute("data-val-required");
+                document.getElementById("VerificationCode").setAttribute("required", "required");
+            } else {
+                document.getElementById("VerificationCode").removeAttribute("required");
+                document.getElementById("VerificationCode").removeAttribute("data-val-required");
+                document.getElementById("Password").setAttribute("required", "required");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var passwordTab = document.getElementById("password-tab");
+            var otpTab = document.getElementById("otp-tab");
+
+            passwordTab.addEventListener("click", function () { switchLoginMode("password"); });
+            otpTab.addEventListener("click", function () { switchLoginMode("otp"); });
+
+            switchLoginMode("password");
+
+            function startCountdown(seconds) {
+                otpSeconds = seconds;
+                document.getElementById("otpTimer").classList.remove("d-none");
+                document.getElementById("otpResend").classList.add("d-none");
+                document.getElementById("btnSendOtp").disabled = true;
+                document.getElementById("countdownDisplay").textContent = seconds;
+
+                if (otpCountdown) clearInterval(otpCountdown);
+                otpCountdown = setInterval(function () {
+                    otpSeconds--;
+                    document.getElementById("countdownDisplay").textContent = otpSeconds;
+                    if (otpSeconds <= 0) {
+                        clearInterval(otpCountdown);
+                        otpCountdown = null;
+                        document.getElementById("otpTimer").classList.add("d-none");
+                        document.getElementById("otpResend").classList.remove("d-none");
+                        document.getElementById("btnSendOtp").disabled = false;
+                    }
+                }, 1000);
+            }
+
+            function sendOtp() {
+                var email = document.getElementById("Email").value;
+                if (!email) {
+                    document.getElementById("otpStatus").innerHTML = '<span class="text-danger">Masukkan email terlebih dahulu.</span>';
+                    return;
+                }
+
+                document.getElementById("btnSendOtp").disabled = true;
+                document.getElementById("otpStatus").innerHTML = '<span class="text-info">Mengirim OTP...</span>';
+
+                $.ajax({
+                    url: '@Url.Action("SendLoginOtp", "Account")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ email: email }),
+                    success: function (res) {
+                        if (res.success) {
+                            document.getElementById("otpStatus").innerHTML = '<span class="text-success">' + res.message + '</span>';
+                            startCountdown(60);
+                            document.getElementById("VerificationCode").focus();
+                        } else {
+                            document.getElementById("otpStatus").innerHTML = '<span class="text-danger">' + res.message + '</span>';
+                            document.getElementById("btnSendOtp").disabled = false;
+                        }
+                    },
+                    error: function () {
+                        document.getElementById("otpStatus").innerHTML = '<span class="text-danger">Terjadi kesalahan. Coba lagi.</span>';
+                        document.getElementById("btnSendOtp").disabled = false;
+                    }
+                });
+            }
+
+            document.getElementById("btnSendOtp").addEventListener("click", sendOtp);
+            document.getElementById("btnResendOtp").addEventListener("click", sendOtp);
+        });
+    </script>
 }

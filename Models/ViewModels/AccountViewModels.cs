@@ -6,9 +6,13 @@ namespace VendingMachineApp.Models.ViewModels
     {
         [Required] [EmailAddress] public string Email { get; set; } = string.Empty;
 
-        [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; } = string.Empty;
+        public string? Password { get; set; }
+
+        public string LoginMode { get; set; } = "password";
+
+        [StringLength(6, MinimumLength = 6, ErrorMessage = "Kode OTP berupa 6 digit angka.")]
+        public string? VerificationCode { get; set; }
     }
 
     public class RegisterViewModel

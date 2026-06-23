@@ -32,6 +32,18 @@ namespace VendingMachineApp.Helpers
                 </div>";
         }
 
+        public static string BuildLoginOtpEmailBody(string customerName, string otpCode)
+        {
+            return $@"
+                <div style='font-family: Arial, sans-serif; padding: 20px; color: #333;'>
+                    <h2>Kode OTP Login</h2>
+                    <p>Halo {customerName},</p>
+                    <p>Gunakan kode 6 digit berikut untuk masuk ke akun Anda. Kode ini hanya berlaku selama <strong>1 menit</strong>.</p>
+                    <h1 style='color: #0dcaf0; font-size: 32px; letter-spacing: 5px;'>{otpCode}</h1>
+                    <p>Jika Anda tidak merasa melakukan login, abaikan email ini.</p>
+                </div>";
+        }
+
         public static string BuildTestEmailBody()
         {
             return
