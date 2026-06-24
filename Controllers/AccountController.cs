@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using System.Security.Claims;
 using VendingMachineApp.Helpers;
 using VendingMachineApp.Models;
@@ -14,17 +13,14 @@ namespace VendingMachineApp.Controllers
    public class AccountController : Controller
    {
       private readonly VendingMachineContext _context;
-      private readonly IMemoryCache _cache;
-      private readonly IEmailService _emailService;
+      private readonly IRedisService _redisService;
 
       public AccountController(
          VendingMachineContext context,
-         IMemoryCache cache,
-         IEmailService emailService)
+         IRedisService redisService)
       {
          _context = context;
-         _cache = cache;
-         _emailService = emailService;
+         _redisService = redisService;
       }
 
       [HttpGet]
@@ -48,53 +44,44 @@ namespace VendingMachineApp.Controllers
             return Json(new { success = false, message = "Email sudah terdaftar." });
          }
 
-         // Generate 6 digit random code
-         var random = new Random();
-         var verificationCode = random.Next(100000, 999999).ToString();
+          // Generate 6 digit random code
+          var random = new Random();
+          var verificationCode = random.Next(100000, 999999).ToString();
 
-         // Simpan ke MemoryCache, expiry 1 menit (60 detik)
-         var cacheOptions = new MemoryCacheEntryOptions()
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+          // Simpan ke Redis Cache, expiry 1 menit
+          await _redisService.SetCacheAsync($"VerificationCode_{model.Email}", verificationCode, TimeSpan.FromMinutes(1));
 
-         _cache.Set($"VerificationCode_{model.Email}", verificationCode, cacheOptions);
+          // Kirim Email via Redis Message Queue
+          var htmlMessage = MessageBuilder.BuildVerificationEmailBody(model.Name, verificationCode);
 
-         // Kirim Email
-         var htmlMessage = MessageBuilder.BuildVerificationEmailBody(model.Name, verificationCode);
+          await _redisService.PublishEmailAsync(model.Email, "Kode Verifikasi Vending App", htmlMessage);
 
-         var isSent = await _emailService.SendEmailAsync(model.Email, "Kode Verifikasi Vending App", htmlMessage);
-
-         if (isSent)
-         {
-            return Json(new { success = true, message = "Kode verifikasi berhasil dikirim." });
-         }
-
-         return Json(new
-         {
-            success = false, message = "Gagal mengirim email verifikasi. Pastikan SMTP Anda dikonfigurasi dengan benar."
-         });
+          return Json(new { success = true, message = "Kode verifikasi sedang dikirim." });
       }
 
-      [HttpPost]
-      [ValidateAntiForgeryToken]
-      public async Task<IActionResult> Register(RegisterViewModel model)
-      {
-         if (ModelState.IsValid)
-         {
-            // Validasi Kode Verifikasi dari Cache
-            if (_cache.TryGetValue($"VerificationCode_{model.Email}", out string? storedCode))
-            {
-               if (storedCode != model.VerificationCode)
-               {
-                  ModelState.AddModelError("VerificationCode", "Kode verifikasi yang dimasukkan salah.");
-                  return View(model);
-               }
-            }
-            else
-            {
-               ModelState.AddModelError("VerificationCode",
-                  "Kode verifikasi telah kadaluarsa atau tidak berikan. Silakan klik tombol 'Register' untuk meminta kode.");
-               return View(model);
-            }
+       [HttpPost]
+       [ValidateAntiForgeryToken]
+       public async Task<IActionResult> Register(RegisterViewModel model)
+       {
+          if (ModelState.IsValid)
+          {
+             // Validasi Kode Verifikasi dari Redis Cache
+             var storedCode = await _redisService.GetCacheAsync($"VerificationCode_{model.Email}");
+
+             if (storedCode != null)
+             {
+                if (storedCode != model.VerificationCode)
+                {
+                   ModelState.AddModelError("VerificationCode", "Kode verifikasi yang dimasukkan salah.");
+                   return View(model);
+                }
+             }
+             else
+             {
+                ModelState.AddModelError("VerificationCode",
+                   "Kode verifikasi telah kadaluarsa atau tidak berikan. Silakan klik tombol 'Register' untuk meminta kode.");
+                return View(model);
+             }
 
             // Validasi Email Ulang (untuk keamanan)
             var existingUser = await _context.UserLogins.FirstOrDefaultAsync(u => u.UserName == model.Email);
@@ -123,8 +110,8 @@ namespace VendingMachineApp.Controllers
 
             await _context.SaveChangesAsync();
 
-            // Hapus kode dari cache setelah sukses
-            _cache.Remove($"VerificationCode_{model.Email}");
+             // Hapus kode dari Redis cache setelah sukses
+             await _redisService.RemoveCacheAsync($"VerificationCode_{model.Email}");
 
             TempData["SuccessMessage"] = "Pendaftaran berhasil! Silakan login.";
             return RedirectToAction("Login");
@@ -153,21 +140,17 @@ namespace VendingMachineApp.Controllers
          if (user == null)
             return Json(new { success = false, message = "Email tidak terdaftar." });
 
-         var random = new Random();
-         var otpCode = random.Next(100000, 999999).ToString();
+          var random = new Random();
+          var otpCode = random.Next(100000, 999999).ToString();
 
-         var cacheOptions = new MemoryCacheEntryOptions()
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
-         _cache.Set($"LoginOtp_{email}", otpCode, cacheOptions);
+          await _redisService.SetCacheAsync($"LoginOtp_{email}", otpCode, TimeSpan.FromMinutes(1));
 
-         var name = user.UserBalance?.Name ?? user.UserName;
-         var htmlMessage = MessageBuilder.BuildLoginOtpEmailBody(name, otpCode);
-         var isSent = await _emailService.SendEmailAsync(email, "Kode OTP Login Vending App", htmlMessage);
+          var name = user.UserBalance?.Name ?? user.UserName;
+          var htmlMessage = MessageBuilder.BuildLoginOtpEmailBody(name, otpCode);
 
-         if (isSent)
-            return Json(new { success = true, message = "Kode OTP berhasil dikirim ke email Anda." });
+          await _redisService.PublishEmailAsync(email, "Kode OTP Login Vending App", htmlMessage);
 
-         return Json(new { success = false, message = "Gagal mengirim email OTP. Pastikan SMTP Anda dikonfigurasi dengan benar." });
+          return Json(new { success = true, message = "Kode OTP sedang dikirim ke email Anda." });
       }
 
       [HttpPost]
@@ -190,12 +173,14 @@ namespace VendingMachineApp.Controllers
 
             if (model.LoginMode == "otp")
             {
-               if (_cache.TryGetValue($"LoginOtp_{model.Email}", out string? storedOtp))
+               var storedOtp = await _redisService.GetCacheAsync($"LoginOtp_{model.Email}");
+
+               if (storedOtp != null)
                {
                   if (storedOtp == model.VerificationCode)
                   {
                      isValid = true;
-                     _cache.Remove($"LoginOtp_{model.Email}");
+                     await _redisService.RemoveCacheAsync($"LoginOtp_{model.Email}");
                   }
                   else
                   {
