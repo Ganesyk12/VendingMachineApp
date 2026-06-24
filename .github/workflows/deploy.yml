@@ -23,6 +23,16 @@ on:
         required: true
       DB_CONNECTION_STRING:
         required: true
+      REDIS_HOST:
+        required: true
+      REDIS_PORT:
+        required: true
+      REDIS_PASSWORD:
+        required: true
+      REDIS_STREAM_EMAIL:
+        required: false
+      REDIS_CONSUMER_GROUP:
+        required: false
 
 jobs:
   deploy:
@@ -63,6 +73,11 @@ jobs:
               -p ${PORT_HOST}:6080 \
               --network tunnel \
               -e DB_CONNECTION_STRING="${{ secrets.DB_CONNECTION_STRING }}" \
+              -e REDIS_HOST="${{ secrets.REDIS_HOST }}" \
+              -e REDIS_PORT="${{ secrets.REDIS_PORT }}" \
+              -e REDIS_PASSWORD="${{ secrets.REDIS_PASSWORD }}" \
+              -e REDIS_STREAM_EMAIL="${{ secrets.REDIS_STREAM_EMAIL }}" \
+              -e REDIS_CONSUMER_GROUP="${{ secrets.REDIS_CONSUMER_GROUP }}" \
               --restart always \
               "$IMAGE_NAME"
             
