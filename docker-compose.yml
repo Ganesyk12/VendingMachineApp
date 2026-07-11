@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vendingapps
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - tunnel
+
+networks:
+  tunnel:
+    external: true
