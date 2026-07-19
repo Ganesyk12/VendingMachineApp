@@ -44,6 +44,11 @@ namespace VendingMachineApp.Controllers
             return Json(new { success = false, message = "Email sudah terdaftar." });
          }
 
+         if (!_redisService.IsAvailable)
+         {
+            return Json(new { success = false, message = "Fitur verifikasi email sedang tidak tersedia. Silakan coba lagi nanti." });
+         }
+
           // Generate 6 digit random code
           var random = new Random();
           var verificationCode = random.Next(100000, 999999).ToString();
@@ -139,6 +144,11 @@ namespace VendingMachineApp.Controllers
 
          if (user == null)
             return Json(new { success = false, message = "Email tidak terdaftar." });
+
+         if (!_redisService.IsAvailable)
+         {
+            return Json(new { success = false, message = "Fitur OTP login sedang tidak tersedia. Silakan gunakan password untuk login." });
+         }
 
           var random = new Random();
           var otpCode = random.Next(100000, 999999).ToString();

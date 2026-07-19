@@ -195,6 +195,11 @@ namespace VendingMachineApp.Controllers
                 return Json(new { success = false, message = "Anda tidak memiliki akses ke transaksi ini." });
             }
 
+            if (!_redisService.IsAvailable)
+            {
+                return Json(new { success = false, message = "Fitur email sedang tidak tersedia. Silakan coba lagi nanti." });
+            }
+
             try
             {
                 var pdfBytes = ReceiptPdfGenerator.Generate(transaction);

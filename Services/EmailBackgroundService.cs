@@ -19,51 +19,66 @@ public class EmailBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var config = new ConfigurationOptions
+        try
         {
-            EndPoints = { $"{_options.Host}:{_options.Port}" },
-            AbortOnConnectFail = false
-        };
-
-        if (!string.IsNullOrEmpty(_options.Password))
-            config.Password = _options.Password;
-
-        _redis = await ConnectionMultiplexer.ConnectAsync(config);
-        var db = _redis.GetDatabase();
-
-        await EnsureConsumerGroupAsync(db);
-
-        _logger.LogInformation("EmailBackgroundService started, listening to stream: {Stream}", _options.EmailStream);
-
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            try
+            var config = new ConfigurationOptions
             {
-                var messages = await db.StreamReadGroupAsync(
-                    _options.EmailStream,
-                    _options.ConsumerGroup,
-                    _options.ConsumerName,
-                    count: 1,
-                    position: ">"
-                );
+                EndPoints = { $"{_options.Host}:{_options.Port}" },
+                AbortOnConnectFail = false,
+                ConnectTimeout = 3000
+            };
 
-                foreach (var message in messages)
+            if (!string.IsNullOrEmpty(_options.Password))
+                config.Password = _options.Password;
+
+            _redis = await ConnectionMultiplexer.ConnectAsync(config);
+
+            if (!_redis.IsConnected)
+            {
+                _logger.LogWarning("Redis is not connected. EmailBackgroundService will not start.");
+                return;
+            }
+
+            var db = _redis.GetDatabase();
+
+            await EnsureConsumerGroupAsync(db);
+
+            _logger.LogInformation("EmailBackgroundService started, listening to stream: {Stream}", _options.EmailStream);
+
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                try
                 {
-                    await ProcessMessageAsync(db, message, stoppingToken);
-                }
+                    var messages = await db.StreamReadGroupAsync(
+                        _options.EmailStream,
+                        _options.ConsumerGroup,
+                        _options.ConsumerName,
+                        count: 1,
+                        position: ">"
+                    );
 
-                if (messages.Length == 0)
-                    await Task.Delay(1000, stoppingToken);
+                    foreach (var message in messages)
+                    {
+                        await ProcessMessageAsync(db, message, stoppingToken);
+                    }
+
+                    if (messages.Length == 0)
+                        await Task.Delay(1000, stoppingToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error reading from Redis stream");
+                    await Task.Delay(5000, stoppingToken);
+                }
             }
-            catch (OperationCanceledException)
-            {
-                break;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error reading from Redis stream");
-                await Task.Delay(5000, stoppingToken);
-            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to connect to Redis. EmailBackgroundService will not start.");
         }
     }
 
