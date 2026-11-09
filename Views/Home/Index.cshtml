@@ -4,58 +4,37 @@
 }
 
 <div class="container py-5">
-    @if (User.Identity != null && User.Identity.IsAuthenticated)
-    {
-        <!-- Balance Management Section -->
-        <div class="vending-card mb-4 animate__animated animate__fadeInDown">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h4 class="page-title mb-1"><i class="fas fa-wallet me-2 text-info"></i>Manajemen Saldo</h4>
-                    <span class="text-muted small">Halo <b>@User.Identity.Name</b>, Anda bisa menambah saldo untuk berbelanja.</span>
-                </div>
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text bg-dark border-info text-info">Rp</span>
-                        <input type="number" id="topupAmount" class="form-control vending-form-control" placeholder="Masukkan nominal..." min="1000" step="1000"/>
-                        <button class="btn btn-info px-4 fw-bold" type="button" id="btnTopup">
-                            <i class="fas fa-plus-circle me-2"></i>TAMBAH SALDO
-                        </button>
-                    </div>
+    <!-- Balance Management Section -->
+    <div class="vending-card mb-4 animate__animated animate__fadeInDown">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h4 class="page-title mb-1"><i class="fas fa-wallet me-2 text-info"></i>Manajemen Saldo</h4>
+                <span class="text-muted small">Tambahkan saldo untuk melakukan pembelian produk.</span>
+            </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-info text-info">Rp</span>
+                    <input type="text" inputmode="numeric" id="topupAmount" class="form-control vending-form-control" placeholder="Masukkan nominal..." autocomplete="off"/>
+                    <button class="btn btn-info px-4 fw-bold" type="button" id="btnTopup">
+                        <i class="fas fa-plus-circle me-2"></i>TAMBAH SALDO
+                    </button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Header / Machine Display -->
-        <div class="vending-header animate__animated animate__fadeIn">
-            <div>
-                <h2 class="mb-0"><i class="fas fa-robot me-2 text-info"></i>Vending Machine Apps</h2>
-                <span class="text-muted small">Silakan pilih produk favorit Anda</span>
-            </div>
-            <div class="money-display-group">
-                <span class="money-label">Saldo Tersedia</span>
-                <div class="fs-3 fw-bold text-info" id="activeBalanceDisplay">Rp @ViewBag.CurrentBalance.ToString("N0")</div>
-            </div>
+    <!-- Header / Machine Display -->
+    <div class="vending-header animate__animated animate__fadeIn">
+        <div>
+            <h2 class="mb-0"><i class="fas fa-robot me-2 text-info"></i>Vending Machine Apps</h2>
+            <span class="text-muted small">Silakan pilih produk favorit Anda</span>
         </div>
-        <input type="hidden" id="currentUserId" value="@ViewBag.IdUser"/>
-    }
-    else
-    {
-        <!-- Guest Welcome Card -->
-        <div class="vending-card mb-4 text-center py-5 animate__animated animate__zoomIn">
-            <i class="fas fa-store fa-4x text-info mb-4"></i>
-            <h2 class="page-title">Selamat Datang di Vending Machine</h2>
-            <p class="text-muted mb-4">Silakan masuk ke akun Anda untuk melanjutkan transaksi belanja.</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a asp-controller="Account" asp-action="Login" class="btn-vending px-5">
-                    <i class="fas fa-sign-in-alt me-2"></i>LOGIN SEKARANG
-                </a>
-                <a asp-controller="Account" asp-action="Register" class="btn btn-outline-info rounded-pill px-5">
-                    <i class="fas fa-user-plus me-2"></i>BUAT AKUN
-                </a>
-            </div>
+        <div class="money-display-group">
+            <span class="money-label">Saldo Tersedia</span>
+            <div class="fs-3 fw-bold text-info" id="activeBalanceDisplay">Rp @ViewBag.CurrentBalance.ToString("N0")</div>
         </div>
-        <input type="hidden" id="currentUserId" value="0"/>
-    }
+    </div>
+    <input type="hidden" id="currentUserId" value="@ViewBag.IdUser"/>
 
     <!-- Product Table -->
     <div class="vending-table-container animate__animated animate__fadeInUp">

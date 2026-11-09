@@ -1,21 +1,22 @@
 # Aplikasi Vending Machine
 
-Aplikasi web yang mensimulasikan sistem mesin penjual otomatis digital atau Vending Machine. Pengguna dapat mendaftar, login, mengecek saldo, memilih produk, dan melakukan transaksi pembelian layaknya menggunakan mesin penjual otomatis fisik. Sistem mencakup otentikasi pengguna, manajemen saldo, katalog produk, serta pelacakan transaksi secara real-time.
+Aplikasi web yang mensimulasikan sistem mesin penjual otomatis digital atau Vending Machine. Pengunjung dapat langsung mengakses mesin tanpa login, mengecek saldo, memilih produk, dan melakukan transaksi pembelian layaknya menggunakan mesin penjual otomatis fisik. Transaksi pengunjung dicatat atas nama user default **Anonym**. Login hanya tersedia untuk **SuperAdmin** yang mengelola sistem, user, role, produk, dan konfigurasi SMTP. Sistem mencakup manajemen saldo, katalog produk, serta pelacakan transaksi secara real-time.
 
 ## Fitur Utama
 
 ### 🔄 Bisnis Proses
-- Sistem vending machine digital yang menyediakan alur e-commerce lengkap: registrasi pengguna, otentikasi, manajemen saldo, katalog produk, dan pelacakan transaksi secara real-time.
+- Sistem vending machine digital yang menyediakan alur lengkap: akses pengunjung tanpa login, manajemen saldo, katalog produk, checkout, dan pelacakan transaksi secara real-time dengan pencatatan atas nama user **Anonym**.
 
 ### 👣 User Journey
-- Pengalaman pengguna yang intuitif: registrasi, login, penjelajahan produk, manajemen saldo, pembelian produk, dan akses ke riwayat transaksi.
+- Pengunjung langsung membuka beranda tanpa login, menambah saldo, memilih produk, dan melakukan checkout. Semua transaksi pengunjung tercatat sebagai user **Anonym**. Menu Transaction disembunyikan untuk pengunjung.
+- SuperAdmin login melalui halaman login untuk mengelola user, role, produk, transaksi, dan konfigurasi SMTP.
 
 ### ⚙️ Teknologi
 - Dibangun dengan stack teknologi modern: ASP.NET Core MVC, Entity Framework Core, PostgreSQL, dengan keamanan menggunakan BCrypt untuk hashing password.
 
 ## Keunggulan Sistem
 
-- 🔐 **Autentikasi Aman**: Password di-hash menggunakan BCrypt untuk keamanan maksimal
+- 🔐 **Autentikasi Aman**: Login khusus SuperAdmin, password di-hash menggunakan BCrypt untuk keamanan maksimal
 - 💳 **Saldo Real-Time**: Pembaruan saldo langsung terlihat setelah setiap transaksi
 - 📊 **Monitoring Transaksi**: Pantau semua aktivitas transaksi secara real-time
 - 📦 **Manajemen Inventaris**: Kelola stok produk secara efisien dan akurat
@@ -24,17 +25,23 @@ Aplikasi web yang mensimulasikan sistem mesin penjual otomatis digital atau Vend
 ## Alur Proses Bisnis
 
 ```
-1. User Akses Aplikasi
-2. Cek Status Akun (Sudah Punya Akun? → Ya/Tidak)
-3. Jika Belum → Registrasi, Jika Sudah → Login
-4. Akses Dashboard / Beranda
-5. Aksi Paralel:
-   - Top Up Saldo → Update Saldo
+1. Pengunjung Akses Aplikasi (tanpa login)
+2. Sistem menggunakan user default "Anonym" untuk sesi pengunjung
+3. Aksi Pengunjung:
+   - Top Up Saldo → Update Saldo Anonym
    - Lihat History
    - Pilih Produk → Validasi Stok & Saldo → Checkout
-   - Admin Panel → Tambah/Edit/Hapus Produk
+   - Transaksi Dicatat atas Nama Anonym
+4. SuperAdmin Login (hanya role VendingApps-SA)
+5. Admin Panel:
+   - Kelola User & Role
+   - Tambah/Edit/Hapus Produk
+   - Monitoring Transaksi
+   - Konfigurasi SMTP
 6. Semua Aktivitas Dicatat dalam Log Sistem
 ```
+
+> Catatan: User default `anonym@vending.local` (nama tampilan `Anonym`) dibuat otomatis saat pengunjung pertama kali mengakses aplikasi. User ini tidak memiliki role sehingga tidak dapat login.
 
 ## Tech Stack
 

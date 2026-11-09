@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -24,12 +25,14 @@ namespace VendingMachineApp.Controllers
       }
 
       [HttpGet]
+      [Authorize(Roles = "VendingApps-SA")]
       public IActionResult Register()
       {
          return View();
       }
 
       [HttpPost]
+      [Authorize(Roles = "VendingApps-SA")]
       public async Task<IActionResult> SendVerificationCode([FromBody] RegisterViewModel model)
       {
          if (string.IsNullOrEmpty(model.Email))
@@ -65,6 +68,7 @@ namespace VendingMachineApp.Controllers
       }
 
        [HttpPost]
+       [Authorize(Roles = "VendingApps-SA")]
        [ValidateAntiForgeryToken]
        public async Task<IActionResult> Register(RegisterViewModel model)
        {
@@ -140,10 +144,14 @@ namespace VendingMachineApp.Controllers
 
          var user = await _context.UserLogins
             .Include(u => u.UserBalance)
+            .Include(u => u.UserRoles)
             .FirstOrDefaultAsync(u => u.UserName == email && u.Status == "A");
 
          if (user == null)
             return Json(new { success = false, message = "Email tidak terdaftar." });
+
+         if (!HasSuperAdminRole(user))
+            return Json(new { success = false, message = "Hanya akun SuperAdmin yang dapat login." });
 
          if (!_redisService.IsAvailable)
          {
@@ -214,6 +222,12 @@ namespace VendingMachineApp.Controllers
                }
             }
 
+            if (isValid && !HasSuperAdminRole(user))
+            {
+               ModelState.AddModelError("", "Hanya akun SuperAdmin yang dapat login.");
+               return View(model);
+            }
+
             if (isValid)
             {
                var claims = new List<Claim>
@@ -250,6 +264,12 @@ namespace VendingMachineApp.Controllers
       {
          await HttpContext.SignOutAsync("CookieAuth");
          return RedirectToAction("Index", "Home");
+      }
+
+      private static bool HasSuperAdminRole(UserLogin user)
+      {
+         return user.UserRoles != null &&
+                user.UserRoles.Any(r => r.RoleName == "VendingApps-SA" && r.Status == "A");
       }
    }
 }

@@ -77,17 +77,18 @@
                         style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 25px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); text-align: center;">
                         <div style="font-size: 3em; margin-bottom: 15px;">🔄</div>
                         <h3 style="color: #1e88e5; margin: 15px 0; font-size: 1.4em;">Bisnis Proses</h3>
-                        <p style="text-align: justify;">Sistem vending machine digital yang menyediakan alur e-commerce
-                            lengkap: registrasi pengguna, otentikasi, manajemen saldo, katalog produk, dan pelacakan
-                            transaksi secara real-time.</p>
+                        <p style="text-align: justify;">Sistem vending machine digital yang menyediakan alur lengkap:
+                            akses pengunjung tanpa login, manajemen saldo, katalog produk, checkout, dan pelacakan
+                            transaksi secara real-time dengan pencatatan atas nama user Anonym.</p>
                     </div>
 
                     <div
                         style="background: linear-gradient(135deg, #e8f5e9, #c8e6c9); padding: 25px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.1); text-align: center;">
                         <div style="font-size: 3em; margin-bottom: 15px;">👣</div>
                         <h3 style="color: #43a047; margin: 15px 0; font-size: 1.4em;">User Journey</h3>
-                        <p style="text-align: justify;">Pengalaman pengguna yang intuitif: registrasi, login,
-                            penjelajahan produk, manajemen saldo, pembelian produk, dan akses ke riwayat transaksi.</p>
+                        <p style="text-align: justify;">Pengunjung langsung mengakses beranda tanpa login, menambah
+                            saldo, memilih produk, dan checkout. Transaksi tercatat sebagai user Anonym. Menu
+                            Transaction disembunyikan untuk pengunjung.</p>
                     </div>
 
                     <div
@@ -107,42 +108,36 @@
 
                     flowchart TD
 
-                    %% Entry
-                    A[User Akses Aplikasi] --> B{Sudah Punya Akun?}
+                    %% Entry Pengunjung
+                    A[Pengunjung Akses Aplikasi] --> B[Beranda / Vending Machine]
 
-                    %% Horizontal Auth Section
-                    B -- Belum --> C[Input Registrasi]
-                    C --> C1[Kirim OTP ke Email]
-                    C1 --> C2{Verifikasi Kode?}
-                    C2 -- Gagal/Expired --> C1
-                    C2 -- Sukses --> D[Login]
+                    %% Aksi Pengunjung
+                    B --> C[Top Up Saldo Anonym]
+                    B --> D[Lihat History Saldo]
+                    B --> E[Pilih Produk]
+                    C --> F[Saldo Update]
+                    E --> G[Validasi Stok & Saldo]
+                    G --> H[Checkout]
+                    H --> H1[Transaksi Dicatat atas Nama Anonym]
+                    H1 --> H2[Generate PDF Struk]
+                    H2 --> H3[Kirim Email Ke User]
 
-                    B -- Sudah --> D
-                    D --> E[Dashboard / Beranda]
-
-                    %% Parallel After Dashboard
-                    E --> F[Top Up Saldo]
-                    E --> G[Lihat History]
-                    E --> H[Pilih Produk]
-                    E --> L[Admin Panel]
-
-                    %% User Process
-                    F --> I[Saldo Update]
-                    H --> J[Validasi Stok & Saldo]
-                    J --> K[Checkout]
-                    K --> K1[Generate PDF Struk]
-                    K1 --> K2[Kirim Email Ke User]
-
-                    %% Admin Process
-                    L --> M[Tambah/Edit Produk]
-                    L --> L1[Konfigurasi SMTP Email]
+                    %% Entry SuperAdmin
+                    A2[SuperAdmin] --> L[Login SuperAdmin]
+                    L --> M[Admin Panel]
+                    M --> M1[Kelola User & Role]
+                    M --> M2[Tambah/Edit Produk]
+                    M --> M3[Konfigurasi SMTP Email]
+                    M --> M4[Monitoring Transaksi]
 
                     %% Logging
-                    I --> P[Audit Log Sistem]
-                    G --> P
-                    K2 --> P
-                    M --> P
-                    L1 --> P
+                    F --> P[Audit Log Sistem]
+                    D --> P
+                    H3 --> P
+                    M1 --> P
+                    M2 --> P
+                    M3 --> P
+                    M4 --> P
 
 
                     %% Styling
@@ -151,10 +146,10 @@
                     classDef log fill:#e8f5e9,stroke:#43a047,stroke-width:2px;
                     classDef mail fill:#f3e5f5,stroke:#8e24aa,stroke-width:2px;
 
-                    class A,B,C,C1,C2,D,E,F,G,H,I,J,K,K1,K2 user;
-                    class L,M,L1 admin;
+                    class A,B,C,D,E,F,G,H,H1,H2,H3 user;
+                    class A2,L,M,M1,M2,M3,M4 admin;
                     class P log;
-                    class C1,K2,L1 mail;
+                    class H3,M3 mail;
 
                 </div>
             </section>
@@ -168,7 +163,7 @@
                         style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
                         <div style="font-size: 2.5em; margin-bottom: 10px;">🔐</div>
                         <h3 style="color: #1e88e5; margin: 10px 0;">Autentikasi Aman</h3>
-                        <p>Password di-hash menggunakan BCrypt untuk keamanan maksimal</p>
+                        <p>Login khusus SuperAdmin, password di-hash menggunakan BCrypt untuk keamanan maksimal</p>
                     </div>
 
                     <div
@@ -202,8 +197,8 @@
                     <div
                         style="background: linear-gradient(135deg, #e0f2f1, #b2dfdb); padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
                         <div style="font-size: 2.5em; margin-bottom: 10px;">🛡️</div>
-                        <h3 style="color: #00796b; margin: 10px 0;">OTP Verification</h3>
-                        <p>Keamanan pendaftaran akun dengan kode verifikasi 6-digit real-time</p>
+                        <h3 style="color: #00796b; margin: 10px 0;">OTP Login SuperAdmin</h3>
+                        <p>Login SuperAdmin dapat menggunakan kode OTP 6-digit yang dikirim via email secara real-time</p>
                     </div>
 
                     <div

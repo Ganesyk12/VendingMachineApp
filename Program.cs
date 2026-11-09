@@ -59,6 +59,7 @@ builder.Services.AddHostedService<EmailBackgroundService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAnonymousUserService, AnonymousUserService>();
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", options =>
     {

@@ -13,23 +13,25 @@ using VendingMachineApp.Helpers;
 
 namespace VendingMachineApp.Controllers
 {
-    [Authorize]
     public class TransactionController : Controller
     {
         private readonly VendingMachineContext _context;
         private readonly IRedisService _redisService;
+        private readonly IAnonymousUserService _anonymousUserService;
 
-        public TransactionController(VendingMachineContext context, IRedisService redisService)
+        public TransactionController(
+            VendingMachineContext context,
+            IRedisService redisService,
+            IAnonymousUserService anonymousUserService)
         {
             _context = context;
             _redisService = redisService;
+            _anonymousUserService = anonymousUserService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var userIdClaim = User.FindFirst("UserId")?.Value;
-            if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId)) return Unauthorized();
-
+            var userId = await GetEffectiveUserIdAsync();
             var isSuperAdmin = User.IsInRole("VendingApps-SA");
 
             var query = _context.UserTransactions
@@ -50,8 +52,7 @@ namespace VendingMachineApp.Controllers
         {
             if (id == null) return NotFound();
 
-            var userIdClaim = User.FindFirst("UserId")?.Value;
-            if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId)) return Unauthorized();
+            var userId = await GetEffectiveUserIdAsync();
             var isSuperAdmin = User.IsInRole("VendingApps-SA");
 
             var transaction = await _context.UserTransactions
@@ -74,7 +75,7 @@ namespace VendingMachineApp.Controllers
         [Authorize(Roles = "VendingApps-SA")]
         public async Task<IActionResult> Create()
         {
-            ViewData["Users"] = await _context.UserLogins.ToListAsync();
+            ViewData["Users"] = await _context.UserLogins.Include(u => u.UserBalance).ToListAsync();
             ViewData["Products"] = await _context.Products.Where(p => p.Quantity > 0).ToListAsync();
             return View();
         }
@@ -91,7 +92,7 @@ namespace VendingMachineApp.Controllers
             if (user == null || user.UserBalance == null)
             {
                 ModelState.AddModelError("User", "User atau data saldo tidak ditemukan");
-                ViewData["Users"] = await _context.UserLogins.ToListAsync();
+                ViewData["Users"] = await _context.UserLogins.Include(u => u.UserBalance).ToListAsync();
                 ViewData["Products"] = await _context.Products.Where(p => p.Quantity > 0).ToListAsync();
                 return View();
             }
@@ -105,7 +106,7 @@ namespace VendingMachineApp.Controllers
                 if (user.UserBalance.Balance < product.Price)
                 {
                     ModelState.AddModelError("Balance", "Saldo tidak mencukupi untuk melakukan pembelian.");
-                    ViewData["Users"] = await _context.UserLogins.ToListAsync();
+                    ViewData["Users"] = await _context.UserLogins.Include(u => u.UserBalance).ToListAsync();
                     ViewData["Products"] = await _context.Products.Where(p => p.Quantity > 0).ToListAsync();
                     return View();
                 }
@@ -175,8 +176,7 @@ namespace VendingMachineApp.Controllers
         [HttpPost]
         public async Task<IActionResult> SendReceiptEmail(int id)
         {
-            var userIdClaim = User.FindFirst("UserId")?.Value;
-            if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId)) return Unauthorized();
+            var userId = await GetEffectiveUserIdAsync();
             var isSuperAdmin = User.IsInRole("VendingApps-SA");
 
             var transaction = await _context.UserTransactions
@@ -193,6 +193,11 @@ namespace VendingMachineApp.Controllers
             if (!isSuperAdmin && transaction.IdUser != userId)
             {
                 return Json(new { success = false, message = "Anda tidak memiliki akses ke transaksi ini." });
+            }
+
+            if (transaction.User.UserName == AnonymousUserService.AnonymousUserName)
+            {
+                return Json(new { success = false, message = "Transaksi pengunjung (Anonym) tidak memiliki alamat email tujuan." });
             }
 
             if (!_redisService.IsAvailable)
@@ -216,6 +221,20 @@ namespace VendingMachineApp.Controllers
             {
                 return Json(new { success = false, message = "Terjadi kesalahan sistem.", error = ex.Message });
             }
+        }
+
+        private int? GetLoggedInUserId()
+        {
+            var userIdClaim = User.FindFirst("UserId")?.Value;
+            return int.TryParse(userIdClaim, out var userId) ? userId : null;
+        }
+
+        private async Task<int> GetEffectiveUserIdAsync()
+        {
+            var loggedInUserId = GetLoggedInUserId();
+            if (loggedInUserId.HasValue) return loggedInUserId.Value;
+
+            return await _anonymousUserService.GetOrCreateIdAsync();
         }
     }
 }

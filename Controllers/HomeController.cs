@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using VendingMachineApp.Models;
 using VendingMachineApp.Models.ViewModels;
+using VendingMachineApp.Services;
 using System.Security.Claims;
 
 namespace VendingMachineApp.Controllers;
@@ -12,43 +13,41 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly VendingMachineContext _context;
+    private readonly IAnonymousUserService _anonymousUserService;
 
-    public HomeController(ILogger<HomeController> logger, VendingMachineContext context)
+    public HomeController(
+        ILogger<HomeController> logger,
+        VendingMachineContext context,
+        IAnonymousUserService anonymousUserService)
     {
         _logger = logger;
         _context = context;
+        _anonymousUserService = anonymousUserService;
     }
 
     public async Task<IActionResult> Index()
     {
         var products = await _context.Products.OrderBy(p => p.Name).ToListAsync();
 
-        if (User.Identity != null && User.Identity.IsAuthenticated)
-        {
-            var userIdClaim = User.FindFirst("UserId")?.Value;
-            if (userIdClaim != null && int.TryParse(userIdClaim, out int userId))
-            {
-                var userBalance = await _context.UserBalances.FirstOrDefaultAsync(ub => ub.IdUser == userId);
-                ViewBag.CurrentBalance = userBalance?.Balance ?? 0;
-                ViewBag.IdUser = userId;
-            }
-        }
-        else
-        {
-            ViewBag.CurrentBalance = 0;
-        }
+        var loggedInUserId = GetLoggedInUserId();
+        var isAnonymous = loggedInUserId == null;
+        var userId = loggedInUserId ?? await _anonymousUserService.GetOrCreateIdAsync();
+
+        var userBalance = await _context.UserBalances.FirstOrDefaultAsync(ub => ub.IdUser == userId);
+
+        ViewBag.CurrentBalance = userBalance?.Balance ?? 0;
+        ViewBag.IdUser = userId;
+        ViewBag.IsAnonymous = isAnonymous;
 
         return View(products);
     }
 
-    [Authorize]
     [HttpPost]
     public async Task<IActionResult> AddBalance(decimal amount)
     {
         if (amount <= 0) return BadRequest("Nominal harus lebih dari 0.");
 
-        var userIdClaim = User.FindFirst("UserId")?.Value;
-        if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId)) return Unauthorized();
+        var userId = await GetEffectiveUserIdAsync();
 
         var userBalance = await _context.UserBalances.FirstOrDefaultAsync(ub => ub.IdUser == userId);
         if (userBalance == null) return NotFound("Data saldo tidak ditemukan.");
@@ -69,14 +68,12 @@ public class HomeController : Controller
         return Json(new { success = true, newBalance = userBalance.Balance });
     }
 
-    [Authorize]
     [HttpPost]
     public async Task<IActionResult> ProcessCheckout([FromBody] CheckoutRequest request)
     {
         if (request == null || request.Items.Count == 0) return BadRequest("Keranjang kosong.");
 
-        var userIdClaim = User.FindFirst("UserId")?.Value;
-        if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId)) return Unauthorized();
+        var userId = await GetEffectiveUserIdAsync();
 
         var userBalance = await _context.UserBalances.FirstOrDefaultAsync(ub => ub.IdUser == userId);
         if (userBalance == null) return NotFound("User tidak ditemukan.");
@@ -157,11 +154,10 @@ public class HomeController : Controller
         return Json(new { success = true, newBalance = userBalance.Balance });
     }
 
-    [Authorize]
     public async Task<IActionResult> PersonalBalanceHistory()
     {
-        var userIdClaim = User.FindFirst("UserId")?.Value;
-        if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId)) return Unauthorized();
+        var userId = await GetEffectiveUserIdAsync();
+        ViewBag.IsAnonymous = GetLoggedInUserId() == null;
 
         var history = await _context.BalanceHistories
             .Where(bh => bh.IdUser == userId)
@@ -169,5 +165,22 @@ public class HomeController : Controller
             .ToListAsync();
 
         return View(history);
+    }
+
+    private int? GetLoggedInUserId()
+    {
+        var userIdClaim = User.FindFirst("UserId")?.Value;
+        return int.TryParse(userIdClaim, out var userId) ? userId : null;
+    }
+
+    /// <summary>
+    /// Mengembalikan user yang sedang aktif: user login jika ada, atau user default "Anonym".
+    /// </summary>
+    private async Task<int> GetEffectiveUserIdAsync()
+    {
+        var loggedInUserId = GetLoggedInUserId();
+        if (loggedInUserId.HasValue) return loggedInUserId.Value;
+
+        return await _anonymousUserService.GetOrCreateIdAsync();
     }
 }

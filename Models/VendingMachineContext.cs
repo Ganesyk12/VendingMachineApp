@@ -48,7 +48,7 @@ public class VendingMachineContext : DbContext
         var user = _httpContextAccessor.HttpContext?.User;
         var currentUser = user?.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
                           ?? user?.Identity?.Name
-                          ?? "SYSTEM";
+                          ?? "ANONYM";
 
         foreach (var entry in entries)
         {
